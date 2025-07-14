@@ -12,16 +12,15 @@ function Footer({ email, location, social }: FooterProps) {
   return (
     <footer className="footer">
       <div className="footer-content">
-        <p>
+        <p className="footer-text" >
           Contact: <a href={`mailto:${email}`}>{email}</a>
         </p>
-        <p>Location: {location}</p>
+        <p className="footer-text"  >Location: {location}</p>
         <div className="social-links">
           {social.github?.trim() && (
             <a
               href={social.github}
-              target="_blank"
-              rel="noopener noreferrer"
+              target="https://github.com/edwinathomasa/"
               aria-label="GitHub Profile"
               className="social-icon"
             >
@@ -31,8 +30,7 @@ function Footer({ email, location, social }: FooterProps) {
           {social.linkedin?.trim() && (
             <a
               href={social.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
+              target="htttps://www.linkedin.com/in/edwinthomasatokaran/"
               aria-label="LinkedIn Profile"
               className="social-icon"
             >

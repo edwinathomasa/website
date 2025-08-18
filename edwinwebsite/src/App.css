@@ -22,12 +22,12 @@
 
 .header-title {
   font-size: 1.2rem;
-  color: #555;
+  color: #8e7e7e;
 }
 
 /* Profile Section */
 .profile {
-  max-width: 800px;
+  max-width: 900px;
   margin: 2rem auto;
   padding: 2rem 1rem;
   background-color: #ffffff;
@@ -36,7 +36,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  text-align: center;
 }
 
 .profile-image {
@@ -50,14 +49,19 @@
 }
 
 .profile-details {
-  max-width: 600px;
+  max-width: 800px;
 }
 
 .profile-description {
+  text-align: justify;
   margin-bottom: 1rem;
   color: #444;
   line-height: 1.6;
   font-size: 1rem;
+}
+
+.profile-contact {
+  text-align: center;
 }
 
 .profile p {
@@ -72,7 +76,7 @@
 
 /* Skills Section */
 .skills {
-  max-width: 800px;
+  max-width: 900px;
   margin: 2rem auto;
   padding: 2rem 1rem;
   background-color: #f9f9f9;

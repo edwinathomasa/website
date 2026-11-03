@@ -16,8 +16,8 @@ function ProfileSection({ profile }: ProfileSectionProps) {
       />
       <div className="profile-details">
         <p className="profile-description">{profile.description}</p>
-        <p><strong>Email:</strong> {profile.email}</p>
-        <p><strong>Location:</strong> {profile.location}</p>
+        <p className="profile-contact"><strong>Email:</strong> {profile.email}</p>
+        <p className="profile-contact"><strong>Location:</strong> {profile.location}</p>
       </div>
     </section>
   );

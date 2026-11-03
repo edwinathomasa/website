@@ -1,0 +1,271 @@
+/* Header Organism */
+.header {
+  background-color: var(--color-transparent);
+  padding: var(--space-6xl) var(--space-2xl);
+  text-align: center;
+}
+
+.header-name {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-sm);
+}
+
+.header-title {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-header-subtitle);
+}
+
+/* Shared Section Card Layout */
+.section-card {
+  max-width: var(--layout-max-width);
+  margin: var(--space-6xl) auto;
+  padding: var(--space-6xl) var(--space-4xl);
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+
+/* Section Heading Atom */
+.section-heading {
+  font-size: var(--font-size-2xl);
+  text-align: center;
+  margin-bottom: var(--space-5xl);
+  color: var(--color-text-section-heading);
+}
+
+/* Profile Organism & Avatar Atom */
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-image {
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+  border-radius: var(--radius-circle);
+  object-fit: cover;
+  border: var(--border-width-avatar) solid var(--color-border-default);
+  box-shadow: var(--shadow-avatar);
+  margin-bottom: var(--space-2xl);
+}
+
+.profile-details {
+  max-width: var(--profile-details-max-width);
+}
+
+.profile-description {
+  text-align: justify;
+  margin-bottom: var(--space-2xl);
+  color: var(--color-text-body);
+  line-height: var(--line-height-relaxed);
+  font-size: var(--font-size-base);
+}
+
+.profile-contact {
+  text-align: center;
+}
+
+.profile p {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  margin: var(--space-xs) var(--space-0);
+}
+
+.profile strong {
+  color: var(--color-text-heading);
+}
+
+/* Skills Organism, SkillCategoryCard Molecule & Chip Atom */
+.skills {
+  background-color: var(--color-bg-surface-alt);
+  text-align: center;
+  color: var(--color-text-secondary);
+}
+
+.skill-categories {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xl);
+  text-align: left;
+}
+
+.skill-category {
+  padding: var(--space-lg) var(--space-2xl);
+  background-color: var(--color-bg-surface);
+  border-radius: var(--radius-sm);
+  border: var(--border-width-thin) solid var(--color-border-subtle);
+}
+
+.skill-category-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-heading);
+  margin: var(--space-0) var(--space-0) var(--space-md) var(--space-0);
+}
+
+.skills-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: var(--space-md);
+}
+
+.skill-chip {
+  padding: var(--space-xs) var(--space-lg);
+  background-color: var(--color-bg-chip);
+  color: var(--color-text-section-heading);
+  border-radius: var(--radius-chip);
+  font-size: var(--font-size-chip);
+  font-weight: var(--font-weight-medium);
+  transition: background-color var(--transition-base);
+  border: var(--border-width-thin) solid var(--color-border-chip);
+}
+
+.skill-chip:hover {
+  background-color: var(--color-bg-chip-hover);
+}
+
+/* TimelineItem Molecule (Used by Experience & Education Organisms) */
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5xl);
+}
+
+.timeline-item {
+  border-left: var(--border-width-timeline) solid var(--color-timeline-accent);
+  padding-left: var(--space-3xl);
+  text-align: left;
+}
+
+.timeline-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-heading);
+  margin: var(--space-0) var(--space-0) var(--space-2xs) var(--space-0);
+}
+
+.timeline-subtitle {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  margin: var(--space-0) var(--space-0) var(--space-sm) var(--space-0);
+}
+
+.timeline-description {
+  font-size: var(--font-size-base);
+  color: var(--color-text-body);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--space-md);
+}
+
+.timeline-highlights {
+  margin: var(--space-sm) var(--space-0) var(--space-lg) var(--space-3xl);
+  padding: var(--space-0);
+  color: var(--color-text-body);
+  line-height: var(--line-height-relaxed);
+}
+
+.timeline-highlights li {
+  margin-bottom: var(--space-xs);
+}
+
+.timeline-tools {
+  font-size: var(--font-size-meta);
+  color: var(--color-text-secondary);
+  margin-top: var(--space-sm);
+}
+
+.timeline-tools strong {
+  color: var(--color-text-heading);
+}
+
+.education-period {
+  color: var(--color-text-subtle);
+  font-style: italic;
+}
+
+/* Projects Organism & ProjectCard Molecule */
+.projects-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4xl);
+}
+
+.project-item {
+  padding: var(--space-4xl);
+  border: var(--border-width-thin) solid var(--color-border-card);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-bg-surface-alt);
+  transition: box-shadow var(--transition-base);
+  text-align: left;
+}
+
+.project-item:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+.project-title {
+  font-size: var(--font-size-xl);
+  color: var(--color-text-heading);
+  margin: var(--space-0) var(--space-0) var(--space-sm) var(--space-0);
+}
+
+.project-description {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-lg);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+}
+
+.project-link {
+  display: inline-block;
+  padding: var(--space-xs) var(--space-xl);
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-radius: var(--radius-xs);
+  text-decoration: none;
+  font-weight: var(--font-weight-medium);
+  transition: background-color var(--transition-base);
+}
+
+.project-link:hover {
+  background-color: var(--color-primary-hover);
+  color: var(--color-text-inverse);
+}
+
+/* Footer Organism & SocialLinksBar Molecule */
+.footer {
+  background-color: var(--color-bg-footer);
+  padding: var(--space-6xl) var(--space-2xl);
+  text-align: center;
+  border-top: var(--border-width-thin) solid var(--color-border-default);
+}
+
+.footer-content {
+  max-width: var(--footer-max-width);
+  margin: var(--space-0) auto;
+}
+
+.footer-text {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-meta);
+  margin-bottom: var(--space-sm);
+}
+
+.social-links {
+  margin-top: var(--space-2xl);
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2xl);
+}
+
+.social-icon {
+  color: var(--color-text-section-heading);
+  transition: color var(--transition-base);
+}
+
+.social-icon:hover {
+  color: var(--color-social-hover);
+}

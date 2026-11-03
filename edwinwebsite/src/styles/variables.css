@@ -1,0 +1,142 @@
+:root {
+  /* Typography */
+  --font-family-base: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-size-2xs: 0.74rem;
+  --font-size-xs: 0.78rem;
+  --font-size-sm: 0.85rem;
+  --font-size-chip: 0.88rem;
+  --font-size-meta: 0.92rem;
+  --font-size-md: 0.95rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.2rem;
+  --font-size-xl: 1.3rem;
+  --font-size-2xl: 1.8rem;
+  --font-size-3xl: 2rem;
+  --font-size-display: 3.2em;
+
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-none: 1;
+  --line-height-tight: 1.1;
+  --line-height-chat: 1.45;
+  --line-height-base: 1.5;
+  --line-height-relaxed: 1.6;
+  --letter-spacing-btn: 0.02em;
+
+  /* Colors - Brand & Accent */
+  --color-primary: #007acc;
+  --color-primary-hover: #005fa3;
+  --color-primary-alpha-bg: rgba(0, 122, 204, 0.06);
+  --color-primary-alpha-hover: rgba(0, 122, 204, 0.1);
+  --color-primary-border-alpha: rgba(0, 122, 204, 0.25);
+  --color-timeline-accent: #007acc79;
+  --color-link: #646cff;
+  --color-link-hover: #535bf2;
+  --color-link-hover-light: #747bff;
+  --color-social-hover: #0077b5;
+
+  /* Colors - Surfaces & Backgrounds */
+  --color-bg-dark: #242424;
+  --color-bg-button-dark: #1a1a1a;
+  --color-bg-surface: #ffffff;
+  --color-bg-surface-alt: #f9f9f9;
+  --color-bg-footer: #f8f8f8;
+  --color-bg-input-row: #fafafa;
+  --color-bg-chip: #eef6fc;
+  --color-bg-chip-hover: #dcecf9;
+  --color-bg-prompt: #f5faff;
+  --color-bg-panel: rgba(255, 255, 255, 0.96);
+  --color-bg-disabled: #b0c4de;
+  --color-transparent: transparent;
+
+  /* Colors - Text */
+  --color-text-root-dark: rgba(255, 255, 255, 0.87);
+  --color-text-root-light: #213547;
+  --color-text-inverse: #ffffff;
+  --color-text-heading: #222222;
+  --color-text-section-heading: #333333;
+  --color-text-body: #444444;
+  --color-text-secondary: #555555;
+  --color-text-muted: #666666;
+  --color-text-subtle: #777777;
+  --color-text-header-subtitle: #8e7e7e;
+  --color-text-assistant-bubble: #1e293b;
+  --color-text-hover-dark: #111111;
+
+  /* Colors - Borders */
+  --color-border-subtle: #eaeaea;
+  --color-border-card: #e0e0e0;
+  --color-border-default: #dddddd;
+  --color-border-input: #d5d5d5;
+  --color-border-chip: #cce3f5;
+
+  /* Colors - Semantic & Voice Status */
+  --color-status-listening: #e53935;
+  --color-status-listening-pulse: rgba(229, 57, 53, 0.45);
+  --color-status-listening-pulse-end: rgba(229, 57, 53, 0);
+  --color-status-thinking: #f59e0b;
+  --color-status-speaking: #10b981;
+  --color-error: #d32f2f;
+
+  /* Spacing Scale */
+  --space-0: 0;
+  --space-2xs: 0.25rem;
+  --space-xs: 0.35rem;
+  --space-sm: 0.5rem;
+  --space-md: 0.6rem;
+  --space-lg: 0.75rem;
+  --space-xl: 0.85rem;
+  --space-2xl: 1rem;
+  --space-3xl: 1.25rem;
+  --space-4xl: 1.5rem;
+  --space-5xl: 1.75rem;
+  --space-6xl: 2rem;
+  --space-panel-bottom: 4.75rem;
+
+  /* Sizing & Layout Dimensions */
+  --layout-min-width: 320px;
+  --layout-max-width: 900px;
+  --profile-details-max-width: 720px;
+  --footer-max-width: 600px;
+  --avatar-size: 160px;
+  --voice-panel-width: 340px;
+  --voice-panel-viewport-margin: 2rem;
+  --voice-messages-max-height: 230px;
+  --voice-bubble-max-width: 88%;
+  --voice-send-btn-size: 32px;
+  --status-dot-size: 9px;
+
+  /* Borders & Radii */
+  --border-width-thin: 1px;
+  --border-width-btn: 1.5px;
+  --border-width-avatar: 3px;
+  --border-width-timeline: 4px;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-chip: 20px;
+  --radius-pill: 9999px;
+  --radius-circle: 50%;
+
+  /* Shadows & Filters */
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.05);
+  --shadow-card-hover: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-avatar: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-voice-btn: 0 4px 14px rgba(0, 122, 204, 0.18);
+  --shadow-voice-btn-hover: 0 6px 20px rgba(0, 122, 204, 0.28);
+  --shadow-voice-panel: 0 12px 32px rgba(0, 0, 0, 0.16);
+  --pulse-spread: 12px;
+
+  --blur-button: blur(8px);
+  --blur-panel: blur(14px);
+
+  /* Transitions & Z-Index */
+  --transition-fast: 0.2s ease;
+  --transition-base: 0.3s ease;
+  --z-floating: 9999;
+}

@@ -1,0 +1,249 @@
+/* AI Voice Chat Floating Button */
+.ai-voice-button {
+  position: fixed;
+  bottom: var(--space-4xl);
+  right: var(--space-4xl);
+  z-index: var(--z-floating);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-3xl);
+  border-radius: var(--radius-pill);
+  border: var(--border-width-btn) solid var(--color-primary);
+  background-color: var(--color-transparent);
+  backdrop-filter: var(--blur-button);
+  -webkit-backdrop-filter: var(--blur-button);
+  color: var(--color-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-btn);
+  cursor: pointer;
+  box-shadow: var(--shadow-voice-btn);
+  transition: transform var(--transition-fast), border-color var(--transition-fast),
+    background-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.ai-voice-button:hover {
+  background-color: var(--color-primary-alpha-hover);
+  border-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-voice-btn-hover);
+}
+
+.ai-voice-button:active {
+  transform: translateY(0);
+}
+
+.ai-voice-icon {
+  flex-shrink: 0;
+}
+
+.ai-voice-text {
+  line-height: var(--line-height-none);
+}
+
+.ai-voice-button-listening {
+  border-color: var(--color-status-listening);
+  color: var(--color-status-listening);
+  animation: ai-pulse 1.5s infinite;
+}
+
+.ai-voice-button-speaking {
+  border-color: var(--color-status-speaking);
+  color: var(--color-status-speaking);
+}
+
+@keyframes ai-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--color-status-listening-pulse);
+  }
+  70% {
+    box-shadow: 0 0 0 var(--pulse-spread) var(--color-status-listening-pulse-end);
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--color-status-listening-pulse-end);
+  }
+}
+
+/* Floating Voice Assistant Panel Organism */
+.ai-voice-panel {
+  position: fixed;
+  bottom: var(--space-panel-bottom);
+  right: var(--space-4xl);
+  z-index: var(--z-floating);
+  width: var(--voice-panel-width);
+  max-width: calc(100vw - var(--voice-panel-viewport-margin));
+  background: var(--color-bg-panel);
+  backdrop-filter: var(--blur-panel);
+  -webkit-backdrop-filter: var(--blur-panel);
+  border: var(--border-width-thin) solid var(--color-primary-border-alpha);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-voice-panel);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  text-align: left;
+  color: var(--color-text-heading);
+}
+
+.ai-voice-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg) var(--space-2xl);
+  border-bottom: var(--border-width-thin) solid var(--color-border-subtle);
+  background: var(--color-primary-alpha-bg);
+}
+
+.ai-voice-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-heading);
+}
+
+.ai-status-dot {
+  width: var(--status-dot-size);
+  height: var(--status-dot-size);
+  border-radius: var(--radius-circle);
+  background-color: var(--color-primary);
+}
+
+.ai-status-listening {
+  background-color: var(--color-status-listening);
+  animation: ai-pulse 1.2s infinite;
+}
+
+.ai-status-thinking {
+  background-color: var(--color-status-thinking);
+}
+
+.ai-status-speaking {
+  background-color: var(--color-status-speaking);
+}
+
+.ai-voice-close {
+  background: var(--color-transparent);
+  border: none;
+  padding: var(--space-2xs);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-voice-close:hover {
+  color: var(--color-text-hover-dark);
+}
+
+.ai-voice-messages {
+  max-height: var(--voice-messages-max-height);
+  overflow-y: auto;
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.ai-voice-bubble {
+  padding: var(--space-md) var(--space-xl);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-chip);
+  line-height: var(--line-height-chat);
+  max-width: var(--voice-bubble-max-width);
+  word-wrap: break-word;
+}
+
+.ai-bubble-assistant {
+  background-color: var(--color-bg-chip);
+  color: var(--color-text-assistant-bubble);
+  align-self: flex-start;
+  border-bottom-left-radius: var(--radius-xs);
+}
+
+.ai-bubble-user {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  align-self: flex-end;
+  border-bottom-right-radius: var(--radius-xs);
+}
+
+.ai-bubble-interim {
+  opacity: 0.75;
+  font-style: italic;
+}
+
+.ai-voice-error {
+  margin: var(--space-0) var(--space-xl) var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-error);
+}
+
+.ai-quick-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: var(--space-0) var(--space-xl) var(--space-md);
+}
+
+.ai-prompt-chip {
+  font-size: var(--font-size-2xs);
+  padding: var(--space-2xs) var(--space-md);
+  border-radius: var(--radius-pill);
+  border: var(--border-width-thin) solid var(--color-border-chip);
+  background-color: var(--color-bg-prompt);
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.ai-prompt-chip:hover:not(:disabled) {
+  background-color: var(--color-bg-chip-hover);
+}
+
+.ai-voice-input-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-md) var(--space-lg);
+  border-top: var(--border-width-thin) solid var(--color-border-subtle);
+  background: var(--color-bg-input-row);
+}
+
+.ai-voice-input {
+  flex: 1;
+  border: var(--border-width-thin) solid var(--color-border-input);
+  border-radius: var(--radius-pill);
+  padding: var(--space-xs) var(--space-xl);
+  font-size: var(--font-size-sm);
+  outline: none;
+  background: var(--color-bg-surface);
+  color: var(--color-text-heading);
+}
+
+.ai-voice-input:focus {
+  border-color: var(--color-primary);
+}
+
+.ai-voice-send {
+  width: var(--voice-send-btn-size);
+  height: var(--voice-send-btn-size);
+  border-radius: var(--radius-circle);
+  border: none;
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-0);
+  cursor: pointer;
+}
+
+.ai-voice-send:disabled {
+  background-color: var(--color-bg-disabled);
+  cursor: not-allowed;
+}

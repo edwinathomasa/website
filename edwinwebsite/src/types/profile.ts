@@ -1,53 +1,50 @@
 export interface SkillCategory {
-  category: string;
-  items: string[];
+  readonly category: string;
+  readonly items: readonly string[];
 }
 
 export interface Experience {
-  role: string;
-  company: string;
-  location?: string;
-  period: string;
-  description: string;
-  highlights?: string[];
-  tools?: string[];
+  readonly role: string;
+  readonly company: string;
+  readonly location?: string;
+  readonly period: string;
+  readonly description: string;
+  readonly highlights?: readonly string[];
+  readonly tools?: readonly string[];
 }
 
 export interface Education {
-  degree: string;
-  institution: string;
-  period: string;
+  readonly degree: string;
+  readonly institution: string;
+  readonly period: string;
 }
 
 export interface Project {
-  title: string;
-  description: string;
-  link: string;
+  readonly title: string;
+  readonly description: string;
+  readonly link: string;
 }
 
 export interface SocialLinks {
-  github?: string;
-  linkedin?: string;
-  website?: string;
+  readonly github?: string;
+  readonly linkedin?: string;
 }
 
 export interface CustomQA {
-  question: string;
-  triggers: string[];
-  answer: string | ((profile: Profile) => string);
+  readonly question: string;
+  readonly triggers: readonly string[];
+  readonly answer: string | ((profile: Profile) => string);
 }
 
 export interface Profile {
-  name: string;
-  title: string;
-  description: string;
-  email: string;
-  location: string;
-  social: SocialLinks;
-  skills: string[];
-  skillCategories?: SkillCategory[];
-  experience: Experience[];
-  education?: Education[];
-  projects: Project[];
+  readonly name: string;
+  readonly title: string;
+  readonly description: string;
+  readonly email: string;
+  readonly location: string;
+  readonly social: SocialLinks;
+  readonly skillCategories: readonly SkillCategory[];
+  readonly experience: readonly Experience[];
+  readonly education?: readonly Education[];
+  readonly projects: readonly Project[];
 }
-

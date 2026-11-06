@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import { ICON_SIZES, UI_LABELS } from '../../constants/config';
-import type { ChatTurn, VoiceState } from '../../types/voice';
+import { ICON_SIZES } from '../../constants/config';
+import { STRINGS } from '../../constants/strings';
+import type { ChatTurn, VoiceSessionStatus } from '../../types/voice';
 import Chip from '../atoms/Chip';
 import IconButton from '../atoms/IconButton';
 import StatusDot from '../atoms/StatusDot';
@@ -9,79 +10,85 @@ import ChatBubble from '../molecules/ChatBubble';
 import VoiceInputForm from '../molecules/VoiceInputForm';
 
 interface AiVoicePanelProps {
-  voiceState: VoiceState;
-  messages: ChatTurn[];
-  interimTranscript: string;
-  errorMessage: string | null;
-  onAskQuestion: (question: string) => void;
-  onClose: () => void;
+  readonly session: VoiceSessionStatus;
+  readonly messages: readonly ChatTurn[];
+  readonly onAskQuestion: (question: string) => void;
+  readonly onClose: () => void;
 }
 
-function AiVoicePanel({
-  voiceState,
+const AiVoicePanel = memo(function AiVoicePanel({
+  session,
   messages,
-  interimTranscript,
-  errorMessage,
   onAskQuestion,
   onClose,
 }: AiVoicePanelProps) {
   const chatLogRef = useRef<HTMLDivElement | null>(null);
+  const isThinking = session.status === 'thinking';
+  const interimText =
+    session.status === 'listening' ? session.interimTranscript : '';
+  const errorText = session.status === 'idle' ? session.error : null;
 
   useEffect(() => {
     if (chatLogRef.current) {
       chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
     }
-  }, [messages, interimTranscript]);
+  }, [messages, interimText]);
 
   return (
     <div
       className="ai-voice-panel"
       role="dialog"
-      aria-label={UI_LABELS.ARIA.VOICE_DIALOG}
+      aria-label={STRINGS.aria.voiceDialog}
     >
       <div className="ai-voice-panel-header">
         <div className="ai-voice-status">
-          <StatusDot state={voiceState} />
-          <span className="ai-status-label">{UI_LABELS.VOICE.STATUS[voiceState]}</span>
+          <StatusDot state={session.status} />
+          <span className="ai-status-label">
+            {STRINGS.voice.status[session.status]}
+          </span>
         </div>
         <IconButton
           className="ai-voice-close"
           onClick={onClose}
-          ariaLabel={UI_LABELS.ARIA.CLOSE_VOICE}
+          ariaLabel={STRINGS.aria.closeVoice}
         >
           <FaTimes size={ICON_SIZES.SM} />
         </IconButton>
       </div>
 
       <div className="ai-voice-messages" ref={chatLogRef}>
-        {messages.map((msg, idx) => (
-          <ChatBubble key={idx} role={msg.role} text={msg.text} />
+        {messages.map((msg) => (
+          <ChatBubble key={msg.id} role={msg.role} text={msg.text} />
         ))}
-        {interimTranscript && (
-          <ChatBubble role="user" text={`${interimTranscript}...`} isInterim />
+        {interimText && (
+          <ChatBubble
+            role="user"
+            text={STRINGS.voice.interimTranscript(interimText)}
+            isInterim
+          />
         )}
       </div>
 
-      {errorMessage && <p className="ai-voice-error">{errorMessage}</p>}
+      {errorText && <p className="ai-voice-error">{errorText}</p>}
 
       <div className="ai-quick-prompts">
-        {UI_LABELS.VOICE.QUICK_PROMPTS.map((prompt) => (
+        {STRINGS.voice.quickPrompts.map((prompt) => (
           <Chip
             key={prompt}
             label={prompt}
             variant="prompt"
-            disabled={voiceState === 'thinking'}
+            disabled={isThinking}
             onClick={() => onAskQuestion(prompt)}
           />
         ))}
       </div>
 
       <VoiceInputForm
-        disabled={voiceState === 'thinking'}
+        disabled={isThinking}
         onSubmitQuestion={onAskQuestion}
       />
     </div>
   );
-}
+});
 
 export default AiVoicePanel;

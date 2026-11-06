@@ -1,12 +1,17 @@
+import { memo } from 'react';
 import type { ChatTurn } from '../../types/voice';
 
 interface ChatBubbleProps {
-  role: ChatTurn['role'];
-  text: string;
-  isInterim?: boolean;
+  readonly role: ChatTurn['role'];
+  readonly text: string;
+  readonly isInterim?: boolean;
 }
 
-function ChatBubble({ role, text, isInterim = false }: ChatBubbleProps) {
+const ChatBubble = memo(function ChatBubble({
+  role,
+  text,
+  isInterim = false,
+}: ChatBubbleProps) {
   const roleClass = role === 'user' ? 'ai-bubble-user' : 'ai-bubble-assistant';
   const interimClass = isInterim ? 'ai-bubble-interim' : '';
 
@@ -15,6 +20,6 @@ function ChatBubble({ role, text, isInterim = false }: ChatBubbleProps) {
       {text}
     </div>
   );
-}
+});
 
 export default ChatBubble;

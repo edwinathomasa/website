@@ -1,14 +1,5 @@
 import type { Profile } from '../types/profile';
 
-export type {
-  SkillCategory,
-  Experience,
-  Education,
-  Project,
-  SocialLinks,
-  Profile,
-} from '../types/profile';
-
 const profile: Profile = {
   name: "Edwin Thomas",
   title: "Senior Mobile & Embedded Systems Software Engineer",
@@ -19,31 +10,11 @@ const profile: Profile = {
   social: {
     github: "https://github.com/edwinathomasa",
     linkedin: "https://www.linkedin.com/in/edwin-thomas-atokaran/",
-    website: "",
   },
-  skills: [
-    "Android (Kotlin, Java, Jetpack Compose)",
-    "iOS (Swift, SwiftUI, CoreBluetooth)",
-    "React Native",
-    "Kotlin Multiplatform (KMP)",
-    "BLE (GATT, FDC, Bonding, Mesh)",
-    "AOSP & Google Automotive Services",
-    "Soong",
-    "MVVM & Atomic Design",
-    "Hilt & Dagger 2",
-    "Firebase (Analytics, Crashlytics, Realtime DB)",
-    "AWS",
-    "Python (bless)",
-    "Cordova",
-    "Xamarin (.NET/C#)",
-    "CI/CD (GitHub Actions, Gradle, Make)",
-    "Git / GitHub / GitLab",
-    "Agile & Scrum",
-  ],
   skillCategories: [
     {
       category: "Mobile Platforms",
-      items: ["Android (Kotlin, Java, Jetpack Compose)", "iOS (Swift, SwiftUI, CoreBluetooth)", "React Native"],
+      items: ["Android (Kotlin, Java, Jetpack Compose)", "iOS (Swift, SwiftUI, CoreBluetooth)"],
     },
     {
       category: "BLE Expertise",
@@ -55,7 +26,7 @@ const profile: Profile = {
     },
     {
       category: "Cross-Platform",
-      items: ["Kotlin Multiplatform (KMP)", "React Native", "Cordova", "Xamarin"],
+      items: ["Kotlin Multiplatform (KMP)", "React Native (TypeScript, JavaScript, Redux Toolkit)", "Xamarin"],
     },
     {
       category: "Architecture",

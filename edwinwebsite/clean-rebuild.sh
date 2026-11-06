@@ -1,21 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Ensure the script runs from the project root directory
 cd "$(dirname "$0")"
 
 echo "🧹 [1/5] Removing existing build artifacts, caches, and node_modules..."
-rm -rf node_modules \
-       package-lock.json \
-       dist \
-       build \
-       .vite \
-       .next \
-       .cache \
-       .turbo
+rm -rf node_modules package-lock.json dist .vite
 
-echo "🧼 [2/5] Forcing npm cache clean..."
-npm cache clean --force
+echo "🧼 [2/5] Verifying npm cache..."
+npm cache verify
 
 echo "📦 [3/5] Performing clean dependency install..."
 npm install

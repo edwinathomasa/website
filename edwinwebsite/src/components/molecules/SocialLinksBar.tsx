@@ -1,5 +1,6 @@
 import { FaGithub, FaLinkedin } from 'react-icons/fa';
-import { ICON_SIZES, UI_LABELS } from '../../constants/config';
+import { ICON_SIZES } from '../../constants/config';
+import { STRINGS } from '../../constants/strings';
 import type { SocialLinks } from '../../types/profile';
 import ExternalLink from '../atoms/ExternalLink';
 
@@ -13,7 +14,7 @@ function SocialLinksBar({ social }: SocialLinksBarProps) {
       {social.github?.trim() && (
         <ExternalLink
           href={social.github}
-          ariaLabel={UI_LABELS.ARIA.GITHUB}
+          ariaLabel={STRINGS.aria.githubProfile}
           className="social-icon"
         >
           <FaGithub size={ICON_SIZES.LG} />
@@ -22,7 +23,7 @@ function SocialLinksBar({ social }: SocialLinksBarProps) {
       {social.linkedin?.trim() && (
         <ExternalLink
           href={social.linkedin}
-          ariaLabel={UI_LABELS.ARIA.LINKEDIN}
+          ariaLabel={STRINGS.aria.linkedinProfile}
           className="social-icon"
         >
           <FaLinkedin size={ICON_SIZES.LG} />

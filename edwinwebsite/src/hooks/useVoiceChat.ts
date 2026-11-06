@@ -1,33 +1,48 @@
-import { useEffect, useRef, useState } from 'react';
-import { API_CONFIG, UI_LABELS } from '../constants/config';
-import profile from '../data/profile';
-import type { ChatTurn, VoiceState } from '../types/voice';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { API_CONFIG } from '../constants/config';
+import { STRINGS } from '../constants/strings';
+import { askProfileAssistant } from '../services/ai/geminiService';
 import {
-  askProfileAssistant,
   speakWithElevenLabs,
   stopActiveSpeech,
   unlockAudioPlayback,
-} from '../services/voiceAssistant';
+} from '../services/audio/elevenLabsTts';
 import {
   getSpeechRecognitionConstructor,
   requestMicrophonePermission,
   type SpeechRecognitionLike,
 } from '../services/audio/speechRecognition';
+import { usePortfolioState } from '../state/PortfolioContext';
+import { INITIAL_VOICE_SESSION, voiceSessionReducer } from '../state/voiceReducer';
+import type { ChatTurn, VoiceSessionStatus } from '../types/voice';
 
-export function useVoiceChat() {
+function createTurnId(): string {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+}
+
+export interface UseVoiceChatResult {
+  readonly isOpen: boolean;
+  readonly session: VoiceSessionStatus;
+  readonly messages: readonly ChatTurn[];
+  readonly askQuestion: (questionText: string) => Promise<void>;
+  readonly toggleVoiceAction: () => void;
+  readonly closePanel: () => void;
+}
+
+export function useVoiceChat(): UseVoiceChatResult {
+  const profile = usePortfolioState();
   const [isOpen, setIsOpen] = useState(false);
-  const [voiceState, setVoiceState] = useState<VoiceState>('idle');
-  const [interimTranscript, setInterimTranscript] = useState('');
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [messages, setMessages] = useState<ChatTurn[]>([
+  const [session, dispatch] = useReducer(voiceSessionReducer, INITIAL_VOICE_SESSION);
+  const [messages, setMessages] = useState<readonly ChatTurn[]>(() => [
     {
+      id: 'welcome-turn',
       role: 'assistant',
-      text: `Hi! I'm ${profile.name}'s AI voice twin. Ask me anything about my experience, BLE & mobile skills, or projects!`,
+      text: STRINGS.voice.welcomeMessage(profile.name),
     },
   ]);
 
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
-  const messagesRef = useRef<ChatTurn[]>(messages);
+  const messagesRef = useRef<readonly ChatTurn[]>(messages);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -40,58 +55,63 @@ export function useVoiceChat() {
     };
   }, []);
 
-  const stopAll = () => {
+  const stopAll = useCallback(() => {
     recognitionRef.current?.abort();
     stopActiveSpeech();
-    setInterimTranscript('');
-    setVoiceState('idle');
-  };
+    dispatch({ type: 'STOP_TO_IDLE' });
+  }, []);
 
-  const askQuestion = async (questionText: string) => {
-    const trimmed = questionText.trim();
-    if (!trimmed) return;
+  const askQuestion = useCallback(
+    async (questionText: string) => {
+      const trimmed = questionText.trim();
+      if (!trimmed) return;
 
-    unlockAudioPlayback();
-    stopAll();
-    setErrorMessage(null);
+      unlockAudioPlayback();
+      recognitionRef.current?.abort();
+      stopActiveSpeech();
 
-    const historySnapshot = messagesRef.current;
-    setMessages((prev) => [...prev, { role: 'user', text: trimmed }]);
-    setVoiceState('thinking');
+      const historySnapshot = messagesRef.current;
+      setMessages((prev) => [
+        ...prev,
+        { id: createTurnId(), role: 'user', text: trimmed },
+      ]);
+      dispatch({ type: 'START_THINKING', query: trimmed });
 
-    try {
-      const answer = await askProfileAssistant(trimmed, historySnapshot);
-      setMessages((prev) => [...prev, { role: 'assistant', text: answer }]);
+      try {
+        const answer = await askProfileAssistant(trimmed, historySnapshot);
+        setMessages((prev) => [
+          ...prev,
+          { id: createTurnId(), role: 'assistant', text: answer },
+        ]);
 
-      await speakWithElevenLabs(
-        answer,
-        () => setVoiceState('speaking'),
-        () => setVoiceState('idle')
-      );
-    } catch (err) {
-      console.error('Voice assistant error:', err);
-      setErrorMessage(
-        err instanceof Error ? err.message : UI_LABELS.VOICE.ERRORS.TTS_FAILED
-      );
-      setVoiceState('idle');
-    }
-  };
+        await speakWithElevenLabs(
+          answer,
+          () => dispatch({ type: 'START_SPEAKING', responseText: answer }),
+          () => dispatch({ type: 'STOP_TO_IDLE' })
+        );
+      } catch (err) {
+        console.error('Voice assistant error:', err);
+        dispatch({
+          type: 'SET_ERROR',
+          error: err instanceof Error ? err.message : STRINGS.errors.ttsFailed,
+        });
+      }
+    },
+    []
+  );
 
-  const startListening = async () => {
+  const startListening = useCallback(async () => {
     stopActiveSpeech();
-    setErrorMessage(null);
 
     const hasMic = await requestMicrophonePermission();
     if (!hasMic) {
-      setErrorMessage(UI_LABELS.VOICE.ERRORS.MIC_BLOCKED);
-      setVoiceState('idle');
+      dispatch({ type: 'SET_ERROR', error: STRINGS.errors.micBlocked });
       return;
     }
 
     const RecognitionCtor = getSpeechRecognitionConstructor();
     if (!RecognitionCtor) {
-      setErrorMessage(UI_LABELS.VOICE.ERRORS.UNSUPPORTED_BROWSER);
-      setVoiceState('idle');
+      dispatch({ type: 'SET_ERROR', error: STRINGS.errors.unsupportedBrowser });
       return;
     }
 
@@ -114,16 +134,23 @@ export function useVoiceChat() {
             interim += result[0].transcript;
           }
         }
-        setInterimTranscript(finalTranscript || interim);
+        dispatch({
+          type: 'UPDATE_INTERIM',
+          transcript: finalTranscript || interim,
+        });
       };
 
       recognition.onerror = (event) => {
         if (event.error === 'not-allowed') {
-          setErrorMessage(UI_LABELS.VOICE.ERRORS.MIC_DENIED);
+          dispatch({ type: 'SET_ERROR', error: STRINGS.errors.micDenied });
         } else if (event.error !== 'aborted' && event.error !== 'no-speech') {
-          setErrorMessage(`Speech recognition error: ${event.error}`);
+          dispatch({
+            type: 'SET_ERROR',
+            error: STRINGS.errors.speechRecognitionError(event.error),
+          });
+        } else {
+          dispatch({ type: 'STOP_TO_IDLE' });
         }
-        setVoiceState('idle');
       };
 
       recognition.onend = () => {
@@ -131,22 +158,20 @@ export function useVoiceChat() {
         if (captured) {
           void askQuestion(captured);
         } else {
-          setInterimTranscript('');
-          setVoiceState((prev) => (prev === 'listening' ? 'idle' : prev));
+          dispatch({ type: 'STOP_TO_IDLE' });
         }
       };
 
       recognitionRef.current = recognition;
-      setVoiceState('listening');
+      dispatch({ type: 'START_LISTENING' });
       recognition.start();
     } catch (err) {
       console.error('Failed to start speech recognition:', err);
-      setErrorMessage(UI_LABELS.VOICE.ERRORS.MIC_START_FAILED);
-      setVoiceState('idle');
+      dispatch({ type: 'SET_ERROR', error: STRINGS.errors.micStartFailed });
     }
-  };
+  }, [askQuestion]);
 
-  const toggleVoiceAction = () => {
+  const toggleVoiceAction = useCallback(() => {
     unlockAudioPlayback();
     if (!isOpen) {
       setIsOpen(true);
@@ -154,24 +179,22 @@ export function useVoiceChat() {
       return;
     }
 
-    if (voiceState === 'listening' || voiceState === 'speaking') {
+    if (session.status === 'listening' || session.status === 'speaking') {
       stopAll();
     } else {
       void startListening();
     }
-  };
+  }, [isOpen, session.status, startListening, stopAll]);
 
-  const closePanel = () => {
+  const closePanel = useCallback(() => {
     stopAll();
     setIsOpen(false);
-  };
+  }, [stopAll]);
 
   return {
     isOpen,
-    voiceState,
+    session,
     messages,
-    interimTranscript,
-    errorMessage,
     askQuestion,
     toggleVoiceAction,
     closePanel,

@@ -1,4 +1,6 @@
 import { API_CONFIG, ENV } from '../../constants/config';
+import { STRINGS } from '../../constants/strings';
+import { formatPeriodsInText } from '../../utils/speechFormat';
 
 // Tiny silent WAV data URI used to unlock HTMLAudioElement during a user click gesture
 const SILENT_WAV_URI =
@@ -73,7 +75,7 @@ async function fetchElevenLabsAudioBlob(
   );
 
   if (!response.ok) {
-    let detailMessage = `HTTP ${response.status}`;
+    let detailMessage: string = STRINGS.errors.httpStatus(response.status);
     try {
       const errJson = (await response.json()) as {
         detail?: { message?: string; status?: string } | string;
@@ -119,7 +121,7 @@ async function playBlobOnSharedAudio(
         currentObjectUrl = null;
       }
       onEnd?.();
-      reject(new Error('Audio element failed to play MP3 stream.'));
+      reject(new Error(STRINGS.errors.audioPlaybackFailed));
     };
     audio.play().catch((playErr) => {
       if (currentObjectUrl === audioUrl) {
@@ -139,8 +141,9 @@ export async function speakWithElevenLabs(
 ): Promise<void> {
   stopActiveSpeech();
 
+  const spokenText = formatPeriodsInText(text);
   const blob = await fetchElevenLabsAudioBlob(
-    text,
+    spokenText,
     ENV.ELEVENLABS_API_KEY,
     ENV.ELEVENLABS_VOICE_ID
   );

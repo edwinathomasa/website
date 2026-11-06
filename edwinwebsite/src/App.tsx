@@ -1,8 +1,13 @@
 import './App.css';
-import HomePage from './components/pages/HomePage';
+import PortfolioContainer from './containers/PortfolioContainer';
+import { PortfolioProvider } from './state/PortfolioContext';
 
 function App() {
-  return <HomePage />;
+  return (
+    <PortfolioProvider>
+      <PortfolioContainer />
+    </PortfolioProvider>
+  );
 }
 
 export default App;

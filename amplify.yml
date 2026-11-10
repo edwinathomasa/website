@@ -1,0 +1,17 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm --prefix edwinwebsite ci --cache .npm --prefer-offline
+    build:
+      commands:
+        - npm --prefix edwinwebsite run build
+  artifacts:
+    baseDirectory: edwinwebsite/dist
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - .npm/**/*
+      - edwinwebsite/node_modules/**/*

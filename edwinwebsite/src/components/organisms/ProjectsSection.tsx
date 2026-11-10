@@ -1,19 +1,19 @@
-import { UI_LABELS } from '../../constants/config';
+import { STRINGS } from '../../constants/strings';
 import type { Project } from '../../types/profile';
 import SectionHeading from '../atoms/SectionHeading';
 import ProjectCard from '../molecules/ProjectCard';
 
 interface ProjectsSectionProps {
-  projects: Project[];
+  readonly projects: readonly Project[];
 }
 
 function ProjectsSection({ projects }: ProjectsSectionProps) {
   return (
     <section className="section-card projects">
-      <SectionHeading title={UI_LABELS.SECTIONS.PROJECTS} />
+      <SectionHeading title={STRINGS.sections.projects} />
       <div className="projects-list">
-        {projects.map((project, idx) => (
-          <ProjectCard key={idx} project={project} />
+        {projects.map((project) => (
+          <ProjectCard key={project.title} project={project} />
         ))}
       </div>
     </section>

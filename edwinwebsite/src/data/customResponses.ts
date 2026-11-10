@@ -1,4 +1,5 @@
 import type { CustomQA } from '../types/profile';
+import { formatPeriodsInText } from '../utils/speechFormat';
 import profile from './profile';
 
 /**
@@ -40,6 +41,7 @@ export const customResponses: CustomQA[] = [
       'where do you live',
       'which country',
       'your location',
+      'current location',
     ],
     answer: (p) => `I am currently based in ${p.location}.`,
   },
@@ -53,7 +55,7 @@ export const customResponses: CustomQA[] = [
     ],
     answer: (p) => {
       const current = p.experience[0];
-      return `I am currently working as a ${current.role} at ${current.company} in ${current.location} (${current.period}), where I develop cross-platform BLE mobile apps for NIOX medical IoT devices.`;
+      return `I am currently working as a ${current.role} at ${current.company} in ${current.location} (${current.period}).`;
     },
   },
   {
@@ -80,22 +82,15 @@ export const customResponses: CustomQA[] = [
       'tech stack',
     ],
     answer: (p) => {
-      return `I am proficient in ${p.skills.join(', ')}.`;
+      const allSkills = [...new Set(p.skillCategories.flatMap((c) => c.items))];
+      return `I am proficient in ${allSkills.join(', ')}.`;
     },
-  },
-  {
-    question: 'Where do you currently live?',
-    triggers: [
-      'where do you live',
-      'your location',
-      'current location',
-    ],
-    answer: (p) => `I am currently based in ${p.location}.`,
   },
 ];
 
 export function resolveCustomAnswer(item: CustomQA): string {
-  return typeof item.answer === 'function' ? item.answer(profile) : item.answer;
+  const raw = typeof item.answer === 'function' ? item.answer(profile) : item.answer;
+  return formatPeriodsInText(raw);
 }
 
 export function matchCustomResponse(userQuestion: string): string | null {

@@ -1,14 +1,19 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { FaPaperPlane } from 'react-icons/fa';
-import { ICON_SIZES, UI_LABELS } from '../../constants/config';
+import { ICON_SIZES } from '../../constants/config';
+import { STRINGS } from '../../constants/strings';
 import IconButton from '../atoms/IconButton';
 
 interface VoiceInputFormProps {
-  disabled: boolean;
-  onSubmitQuestion: (question: string) => void;
+  readonly disabled: boolean;
+  readonly onSubmitQuestion: (question: string) => void;
 }
 
-function VoiceInputForm({ disabled, onSubmitQuestion }: VoiceInputFormProps) {
+const VoiceInputForm = memo(function VoiceInputForm({
+  disabled,
+  onSubmitQuestion,
+}: VoiceInputFormProps) {
+  // Colocated input draft state so keystrokes never re-render the chat log or parent panel
   const [textInput, setTextInput] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -23,7 +28,7 @@ function VoiceInputForm({ disabled, onSubmitQuestion }: VoiceInputFormProps) {
       <input
         type="text"
         className="ai-voice-input"
-        placeholder={UI_LABELS.VOICE.INPUT_PLACEHOLDER}
+        placeholder={STRINGS.voice.inputPlaceholder}
         value={textInput}
         onChange={(e) => setTextInput(e.target.value)}
         disabled={disabled}
@@ -32,12 +37,12 @@ function VoiceInputForm({ disabled, onSubmitQuestion }: VoiceInputFormProps) {
         type="submit"
         className="ai-voice-send"
         disabled={!textInput.trim() || disabled}
-        ariaLabel={UI_LABELS.ARIA.SEND_QUESTION}
+        ariaLabel={STRINGS.aria.sendQuestion}
       >
         <FaPaperPlane size={ICON_SIZES.XS} />
       </IconButton>
     </form>
   );
-}
+});
 
 export default VoiceInputForm;

@@ -1,4 +1,4 @@
-import { UI_LABELS } from '../../constants/config';
+import { STRINGS } from '../../constants/strings';
 import type { SocialLinks } from '../../types/profile';
 import SocialLinksBar from '../molecules/SocialLinksBar';
 
@@ -13,10 +13,10 @@ function Footer({ email, location, social }: FooterProps) {
     <footer className="footer">
       <div className="footer-content">
         <p className="footer-text">
-          {UI_LABELS.PROFILE.CONTACT_LABEL} <a href={`mailto:${email}`}>{email}</a>
+          {STRINGS.footer.contactLabel} <a href={`mailto:${email}`}>{email}</a>
         </p>
         <p className="footer-text">
-          {UI_LABELS.PROFILE.LOCATION_LABEL} {location}
+          {STRINGS.footer.locationLabel} {location}
         </p>
         <SocialLinksBar social={social} />
       </div>

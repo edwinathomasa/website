@@ -1,10 +1,9 @@
 interface SectionHeadingProps {
   title: string;
-  className?: string;
 }
 
-function SectionHeading({ title, className = 'section-heading' }: SectionHeadingProps) {
-  return <h2 className={className}>{title}</h2>;
+function SectionHeading({ title }: SectionHeadingProps) {
+  return <h2 className="section-heading">{title}</h2>;
 }
 
 export default SectionHeading;

@@ -1,4 +1,4 @@
-import { UI_LABELS } from '../../constants/config';
+import { STRINGS } from '../../constants/strings';
 import type { Project } from '../../types/profile';
 import ExternalLink from '../atoms/ExternalLink';
 
@@ -13,7 +13,7 @@ function ProjectCard({ project }: ProjectCardProps) {
       <p className="project-description">{project.description}</p>
       {project.link?.trim() && (
         <ExternalLink href={project.link} className="project-link">
-          {UI_LABELS.PROFILE.VIEW_PROJECT}
+          {STRINGS.projects.viewProject}
         </ExternalLink>
       )}
     </div>

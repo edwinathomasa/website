@@ -1,52 +1,59 @@
+import { memo } from 'react';
 import { FaMicrophone, FaStop, FaVolumeUp } from 'react-icons/fa';
-import { ICON_SIZES, UI_LABELS } from '../../constants/config';
-import { useVoiceChat } from '../../hooks/useVoiceChat';
+import { ICON_SIZES } from '../../constants/config';
+import { STRINGS } from '../../constants/strings';
+import type { ChatTurn, VoiceSessionStatus } from '../../types/voice';
 import AiVoicePanel from './AiVoicePanel';
 
-function AiVoiceWidget() {
-  const {
-    isOpen,
-    voiceState,
-    messages,
-    interimTranscript,
-    errorMessage,
-    askQuestion,
-    toggleVoiceAction,
-    closePanel,
-  } = useVoiceChat();
+interface AiVoiceWidgetProps {
+  readonly isOpen: boolean;
+  readonly session: VoiceSessionStatus;
+  readonly messages: readonly ChatTurn[];
+  readonly onAskQuestion: (question: string) => void;
+  readonly onToggleVoice: () => void;
+  readonly onClosePanel: () => void;
+}
+
+const AiVoiceWidget = memo(function AiVoiceWidget({
+  isOpen,
+  session,
+  messages,
+  onAskQuestion,
+  onToggleVoice,
+  onClosePanel,
+}: AiVoiceWidgetProps) {
+  const { status } = session;
 
   return (
     <>
       {isOpen && (
         <AiVoicePanel
-          voiceState={voiceState}
+          session={session}
           messages={messages}
-          interimTranscript={interimTranscript}
-          errorMessage={errorMessage}
-          onAskQuestion={(q) => void askQuestion(q)}
-          onClose={closePanel}
+          onAskQuestion={onAskQuestion}
+          onClose={onClosePanel}
         />
       )}
 
       <button
         type="button"
         className={`ai-voice-button ${
-          voiceState !== 'idle' ? `ai-voice-button-${voiceState}` : ''
+          status !== 'idle' ? `ai-voice-button-${status}` : ''
         }`}
-        onClick={toggleVoiceAction}
-        aria-label={UI_LABELS.ARIA.VOICE_BUTTON}
+        onClick={onToggleVoice}
+        aria-label={STRINGS.aria.voiceButton}
       >
-        {voiceState === 'listening' ? (
+        {status === 'listening' ? (
           <FaStop className="ai-voice-icon" size={ICON_SIZES.SM} />
-        ) : voiceState === 'speaking' ? (
+        ) : status === 'speaking' ? (
           <FaVolumeUp className="ai-voice-icon" size={ICON_SIZES.MD} />
         ) : (
           <FaMicrophone className="ai-voice-icon" size={ICON_SIZES.MD} />
         )}
-        <span className="ai-voice-text">{UI_LABELS.VOICE.BUTTON[voiceState]}</span>
+        <span className="ai-voice-text">{STRINGS.voice.button[status]}</span>
       </button>
     </>
   );
-}
+});
 
 export default AiVoiceWidget;

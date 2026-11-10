@@ -1,14 +1,14 @@
 /* Header Organism */
 .header {
   background-color: var(--color-transparent);
-  padding: var(--space-6xl) var(--space-2xl);
+  padding: var(--space-0) var(--space-2xl);
   text-align: center;
 }
 
 .header-name {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-bold);
-  margin-bottom: var(--space-sm);
+  margin-bottom: var(--space-xsm);
 }
 
 .header-title {

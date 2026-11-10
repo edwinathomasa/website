@@ -1,5 +1,5 @@
-import profile from '../../data/profile';
-import AiVoiceWidget from '../organisms/AiVoiceWidget';
+import { memo, type ReactNode } from 'react';
+import type { Profile } from '../../types/profile';
 import EducationSection from '../organisms/EducationSection';
 import ExperienceSection from '../organisms/ExperienceSection';
 import Footer from '../organisms/Footer';
@@ -9,7 +9,15 @@ import ProjectsSection from '../organisms/ProjectsSection';
 import SkillsSection from '../organisms/SkillsSection';
 import PortfolioTemplate from '../templates/PortfolioTemplate';
 
-function HomePage() {
+interface HomePageProps {
+  readonly profile: Profile;
+  readonly floatingAction?: ReactNode;
+}
+
+const HomePage = memo(function HomePage({
+  profile,
+  floatingAction,
+}: HomePageProps) {
   return (
     <PortfolioTemplate
       header={<Header name={profile.name} title={profile.title} />}
@@ -20,13 +28,10 @@ function HomePage() {
           social={profile.social}
         />
       }
-      floatingAction={<AiVoiceWidget />}
+      floatingAction={floatingAction}
     >
       <ProfileSection profile={profile} />
-      <SkillsSection
-        skills={profile.skills}
-        skillCategories={profile.skillCategories}
-      />
+      <SkillsSection skillCategories={profile.skillCategories} />
       <ExperienceSection experience={profile.experience} />
       {profile.education && profile.education.length > 0 && (
         <EducationSection education={profile.education} />
@@ -34,6 +39,6 @@ function HomePage() {
       <ProjectsSection projects={profile.projects} />
     </PortfolioTemplate>
   );
-}
+});
 
 export default HomePage;

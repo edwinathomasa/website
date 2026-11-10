@@ -19,7 +19,6 @@ export interface SpeechRecognitionLike {
   interimResults: boolean;
   continuous: boolean;
   start: () => void;
-  stop: () => void;
   abort: () => void;
   onresult: ((event: SpeechRecognitionEventLike) => void) | null;
   onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;

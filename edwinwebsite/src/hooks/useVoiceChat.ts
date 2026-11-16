@@ -30,6 +30,10 @@ interface ActiveMediaSession {
   abort: () => void;
 }
 
+export interface UseVoiceChatOptions {
+  readonly autoPlayWelcome?: boolean;
+}
+
 export interface UseVoiceChatResult {
   readonly isOpen: boolean;
   readonly session: VoiceSessionStatus;
@@ -39,9 +43,16 @@ export interface UseVoiceChatResult {
   readonly closePanel: () => void;
 }
 
-export function useVoiceChat(): UseVoiceChatResult {
+export function useVoiceChat(
+  options?: UseVoiceChatOptions
+): UseVoiceChatResult {
+  const isAiRoute =
+    typeof window !== 'undefined' &&
+    (window.location.hash === '#/ai' || window.location.pathname === '/ai');
+  const shouldAutoPlayWelcome = options?.autoPlayWelcome ?? isAiRoute;
+
   const profile = usePortfolioState();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(shouldAutoPlayWelcome);
   const [session, dispatch] = useReducer(
     voiceSessionReducer,
     INITIAL_VOICE_SESSION
@@ -62,6 +73,38 @@ export function useVoiceChat(): UseVoiceChatResult {
   useEffect(() => {
     messagesRef.current = messages;
   }, [messages]);
+
+  useEffect(() => {
+    if (!shouldAutoPlayWelcome) return;
+    let cancelled = false;
+    const welcomeText = STRINGS.voice.welcomeMessage(profile.name);
+
+    const playGreeting = () => {
+      if (cancelled) return;
+      void speakWithElevenLabs(
+        welcomeText,
+        () => {
+          if (!cancelled) {
+            dispatch({ type: 'START_SPEAKING', responseText: welcomeText });
+          }
+        },
+        () => {
+          if (!cancelled) {
+            dispatch({ type: 'STOP_TO_IDLE' });
+          }
+        }
+      ).catch((err) => {
+        console.warn('Welcome audio autoplay deferred:', err);
+      });
+    };
+
+    const timer = window.setTimeout(playGreeting, 60);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [shouldAutoPlayWelcome, profile.name]);
 
   useEffect(() => {
     return () => {

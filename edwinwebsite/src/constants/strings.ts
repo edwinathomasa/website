@@ -40,7 +40,7 @@ export const STRINGS = {
   },
   voice: {
     welcomeMessage: (name: string) =>
-      `Hi! I'm ${name}'s AI voice twin. Ask me anything about my experience, BLE & mobile skills, or projects!`,
+      `Hi! I'm ${name}'s AI voice twin. Ask me anything about my professional experience, skills, or projects!`,
     interimTranscript: (transcript: string) => `${transcript}...`,
     inputPlaceholder: 'Or type a question...',
     quickPrompts: [

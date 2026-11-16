@@ -1,9 +1,0 @@
-@import './styles/sections.css';
-@import './styles/voice-chat.css';
-
-#root {
-  max-width: max-content;
-  margin: var(--space-0) auto;
-  padding: var(--space-6xl);
-  text-align: center;
-}

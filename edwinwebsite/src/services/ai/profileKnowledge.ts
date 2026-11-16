@@ -42,7 +42,7 @@ const KEYWORD_MATCHERS: Array<{ keywords: string[]; reply: () => string }> = [
   {
     keywords: ['automotive', 'aosp', 'ecarx'],
     reply: () =>
-      `At ALTEN - ECARX Sweden AB, I worked as an Android Embedded Developer where I architected background services for real-time Vehicle Energy Model updates within Google Automotive Services and AOSP using Soong and AIDL.`,
+      `At ALTEN - EcarX Sweden AB, I worked as an Android Embedded Developer where I architected background services for real-time Vehicle Energy Model updates within Google Automotive Services and AOSP using Soong and AIDL.`,
   },
   {
     keywords: ['project'],
@@ -85,5 +85,5 @@ export function buildLocalFallbackAnswer(question: string): string {
     }
   }
 
-  return `I'm ${profile.name}, a ${profile.title} in ${profile.location}. I specialize in Android, iOS, Kotlin Multiplatform, React Native, BLE, and AOSP. Feel free to ask about my work at NIOX, ECARX, Renz, my skills, or how to get in touch!`;
+  return `I'm ${profile.name}, a ${profile.title} in ${profile.location}. I specialize in Android, iOS, Kotlin Multiplatform, React Native, BLE, and AOSP. Feel free to ask about my work at Niox, EcarX, Renz, my skills, or how to get in touch!`;
 }

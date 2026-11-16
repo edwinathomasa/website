@@ -19,6 +19,7 @@ export interface SpeechRecognitionLike {
   interimResults: boolean;
   continuous: boolean;
   start: () => void;
+  stop: () => void;
   abort: () => void;
   onresult: ((event: SpeechRecognitionEventLike) => void) | null;
   onerror: ((event: SpeechRecognitionErrorEventLike) => void) | null;
@@ -35,18 +36,3 @@ export function getSpeechRecognitionConstructor(): SpeechRecognitionConstructor 
   };
   return win.SpeechRecognition ?? win.webkitSpeechRecognition ?? null;
 }
-
-export async function requestMicrophonePermission(): Promise<boolean> {
-  if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
-    return true;
-  }
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    stream.getTracks().forEach((track) => track.stop());
-    return true;
-  } catch (err) {
-    console.warn('Microphone permission error:', err);
-    return false;
-  }
-}
-

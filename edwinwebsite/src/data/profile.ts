@@ -18,7 +18,13 @@ const profile: Profile = {
     },
     {
       category: "BLE Expertise",
-      items: ["Central/peripheral roles", "Bonding", "GATT services", "FDC protocol", "Notifications/indications"],
+      items: [
+        "Central/Peripheral Roles",
+        "Bonding",
+        "GATT Services",
+        "FDC Protocol",
+        "Notifications/Indications",
+      ],
     },
     {
       category: "Cloud & Analytics",
@@ -137,13 +143,13 @@ const profile: Profile = {
     },
     {
       role: "Software Developer",
-      company: "FAGERHULTS BELYSNING AB",
+      company: "Fagerhults Belysning AB",
       location: "Sweden",
       period: "08/2018 – 03/2019",
       description:
-        "Engineered IoT mobile application interface to control smart lighting systems over BLE mesh.",
+        "Engineered IoT mobile application interface to control smart lighting systems over BLE Mesh.",
       highlights: [
-        "Implemented BLE mesh networking protocols enabling device controls (power, dimming) and data tunneling.",
+        "Implemented BLE Mesh networking protocols enabling device controls (power, dimming) and data tunneling.",
         "Developed and maintained cross-platform Xamarin (.NET/C#) applications connected to backend APIs.",
       ],
       tools: ["Xamarin", ".NET", "C#", "BLE Mesh", "REST APIs"],
@@ -172,7 +178,7 @@ const profile: Profile = {
     },
     {
       role: "Consultant McAfee",
-      company: "Sutherland Global Services - Mcafee",
+      company: "Sutherland Global Services - McAfee",
       location: "India",
       period: "01/2013 – 08/2014",
       description:
@@ -190,7 +196,7 @@ const profile: Profile = {
       period: "2014 – 2016",
     },
     {
-      degree: "Bachelor's degree in Computer Science and Engineering",
+      degree: "Bachelor's Degree in Computer Science and Engineering",
       institution: "Anna University, Chennai",
       period: "2008 – 2012",
     },
@@ -203,7 +209,7 @@ const profile: Profile = {
       link: "",
     },
     {
-      title: "Renz Smart Parcel box BLE Apps",
+      title: "Renz Smart Parcel Box BLE Apps",
       description:
         "React Native mobile application with custom native BLE modules and AES-encrypted packet framing for physical parcel lock actuation, delivery management, and serverless Firebase push notifications.",
       link: "",

@@ -86,6 +86,39 @@ export const customResponses: CustomQA[] = [
       return `I am proficient in ${allSkills.join(', ')}.`;
     },
   },
+  {
+    question: 'What are your hobbies or interests outside of work?',
+    triggers: [
+      'hobby',
+      'hobbies',
+      'what do you do for fun',
+      'what do you like to do',
+      'interests outside work',
+      'free time activities',
+      'what you do in your spare time'
+    ],
+    answer: () => {
+      return `In my free time, I love listening to music and keeping up with the latest tech trends. Lately, though, most of my downtime goes to hanging out with my family—which happily takes up all my time!`;
+    },
+  },
+  {
+    question: 'tell me about your family',
+    triggers: [
+      'tell me about your family',
+      'about your family',
+      'family details',
+      'family information',
+      'wife',
+      'kids',
+      'married',
+      'children',
+      'spouse',
+      'partner'
+    ],
+    answer: () => {
+      return `I am happy to chat all about my work and professional background, though I prefer to keep my personal life private when using AI tools`;
+    },
+  },
 ];
 
 export function resolveCustomAnswer(item: CustomQA): string {

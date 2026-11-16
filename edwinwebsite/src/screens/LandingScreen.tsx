@@ -1,6 +1,7 @@
 import { memo } from 'react';
 import TiltCard from '../components/TiltCard';
 import Particles from '../Particles';
+import { unlockAudioPlayback } from '../services/audio/elevenLabsTts';
 
 const PARTICLE_COLORS = ['#8C6D53', '#6E6A63', '#22211E'] as const;
 
@@ -62,7 +63,10 @@ const LandingScreen = memo(function LandingScreen({
             <button
               type="button"
               className="landing-square-btn depth-layer-2"
-              onClick={onNavigateAi}
+              onClick={() => {
+                unlockAudioPlayback();
+                onNavigateAi();
+              }}
             >
               <span className="landing-btn-label">AI</span>
             </button>

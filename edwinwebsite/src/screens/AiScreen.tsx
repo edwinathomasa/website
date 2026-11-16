@@ -17,7 +17,9 @@ const AiConversationWorkspace = memo(function AiConversationWorkspace({
   onNavigateBack,
 }: AiScreenProps) {
   const profile = usePortfolioState();
-  const { session, messages, askQuestion, toggleVoiceAction } = useVoiceChat();
+  const { session, messages, askQuestion, toggleVoiceAction } = useVoiceChat({
+    autoPlayWelcome: true,
+  });
   const chatScrollRef = useRef<HTMLDivElement | null>(null);
 
   const { status } = session;

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import AiScreen from './screens/AiScreen';
 import LandingScreen from './screens/LandingScreen';
 import PortfolioScreen from './screens/PortfolioScreen';
+import { unlockAudioPlayback } from './services/audio/elevenLabsTts';
 
 type ScreenName = 'landing' | 'portfolio' | 'ai';
 
@@ -41,6 +42,7 @@ function App() {
   }, []);
 
   const navigateToAi = useCallback(() => {
+    unlockAudioPlayback();
     window.history.pushState({ screen: 'ai' }, '', '#/ai');
     setActiveScreen('ai');
   }, []);

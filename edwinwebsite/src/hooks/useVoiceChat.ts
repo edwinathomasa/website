@@ -30,29 +30,14 @@ interface ActiveMediaSession {
   abort: () => void;
 }
 
-export interface UseVoiceChatOptions {
-  readonly autoPlayWelcome?: boolean;
-}
-
 export interface UseVoiceChatResult {
-  readonly isOpen: boolean;
   readonly session: VoiceSessionStatus;
   readonly messages: readonly ChatTurn[];
-  readonly askQuestion: (questionText: string) => Promise<void>;
   readonly toggleVoiceAction: () => void;
-  readonly closePanel: () => void;
 }
 
-export function useVoiceChat(
-  options?: UseVoiceChatOptions
-): UseVoiceChatResult {
-  const isAiRoute =
-    typeof window !== 'undefined' &&
-    (window.location.hash === '#/ai' || window.location.pathname === '/ai');
-  const shouldAutoPlayWelcome = options?.autoPlayWelcome ?? isAiRoute;
-
+export function useVoiceChat(): UseVoiceChatResult {
   const profile = usePortfolioState();
-  const [isOpen, setIsOpen] = useState(shouldAutoPlayWelcome);
   const [session, dispatch] = useReducer(
     voiceSessionReducer,
     INITIAL_VOICE_SESSION
@@ -75,7 +60,6 @@ export function useVoiceChat(
   }, [messages]);
 
   useEffect(() => {
-    if (!shouldAutoPlayWelcome) return;
     let cancelled = false;
     const welcomeText = STRINGS.voice.welcomeMessage(profile.name);
 
@@ -104,7 +88,7 @@ export function useVoiceChat(
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [shouldAutoPlayWelcome, profile.name]);
+  }, [profile.name]);
 
   useEffect(() => {
     return () => {
@@ -449,12 +433,6 @@ export function useVoiceChat(
 
   const toggleVoiceAction = useCallback(() => {
     unlockAudioPlayback();
-    if (!isOpen) {
-      setIsOpen(true);
-      startListening();
-      return;
-    }
-
     if (session.status === 'listening') {
       if (mediaSessionRef.current) {
         mediaSessionRef.current.stopAndSubmit();
@@ -466,19 +444,11 @@ export function useVoiceChat(
     } else {
       startListening();
     }
-  }, [isOpen, session.status, startListening, stopAll]);
-
-  const closePanel = useCallback(() => {
-    stopAll();
-    setIsOpen(false);
-  }, [stopAll]);
+  }, [session.status, startListening, stopAll]);
 
   return {
-    isOpen,
     session,
     messages,
-    askQuestion,
     toggleVoiceAction,
-    closePanel,
   };
 }

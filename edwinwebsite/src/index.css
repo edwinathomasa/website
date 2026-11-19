@@ -78,7 +78,6 @@ body {
 
 .depth-bg .particles-container,
 .depth-bg .particles-canvas {
-  filter: blur(0.6px);
   opacity: 0.72;
   pointer-events: none;
 }
@@ -88,12 +87,12 @@ body {
   position: relative;
   background: linear-gradient(
     165deg,
-    rgba(255, 255, 255, 0.78) 0%,
-    rgba(255, 255, 255, 0.56) 55%,
-    rgba(236, 234, 245, 0.66) 100%
+    rgba(255, 255, 255, 0.82) 0%,
+    rgba(255, 255, 255, 0.62) 55%,
+    rgba(236, 234, 245, 0.72) 100%
   );
-  backdrop-filter: blur(16px) saturate(125%);
-  -webkit-backdrop-filter: blur(16px) saturate(125%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-top: 2px solid #FFFFFF;
   border-left: 2px solid rgba(255, 255, 255, 0.92);
   border-right: 2px solid rgba(var(--shadow-tint), 0.10);
@@ -129,12 +128,10 @@ body {
   position: relative;
   background: linear-gradient(
     168deg,
-    rgba(255, 255, 255, 0.94) 0%,
-    rgba(255, 255, 255, 0.80) 58%,
-    rgba(241, 239, 248, 0.86) 100%
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.84) 58%,
+    rgba(241, 239, 248, 0.90) 100%
   );
-  backdrop-filter: blur(10px) saturate(130%);
-  -webkit-backdrop-filter: blur(10px) saturate(130%);
   border-top: 2px solid #FFFFFF;
   border-left: 1.5px solid rgba(255, 255, 255, 0.95);
   border-right: 1.5px solid rgba(var(--shadow-tint), 0.10);
@@ -209,7 +206,6 @@ body {
    ========================================================================== */
 .tilt-card {
   position: relative;
-  transform-style: preserve-3d;
 }
 
 /* ==========================================================================
@@ -334,6 +330,9 @@ body {
 .glass-scroll {
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  transform: translateZ(0);
+  will-change: scroll-position;
   scrollbar-width: thin;
   scrollbar-color: rgba(126, 34, 206, 0.36) transparent;
 }

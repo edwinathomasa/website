@@ -14,10 +14,3 @@ export const API_CONFIG = {
   ELEVENLABS_SIMILARITY_BOOST: 0.75,
   SPEECH_RECOGNITION_LANG: 'en-US',
 } as const;
-
-export const ICON_SIZES = {
-  XS: 13,
-  SM: 14,
-  MD: 16,
-  LG: 24,
-} as const;

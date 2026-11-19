@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import AiScreen from './screens/AiScreen';
-import LandingScreen from './screens/LandingScreen';
-import PortfolioScreen from './screens/PortfolioScreen';
+import AiConversationPage from './components/pages/AiConversationPage';
+import LandingPage from './components/pages/LandingPage';
+import PortfolioPage from './components/pages/PortfolioPage';
 import { unlockAudioPlayback } from './services/audio/elevenLabsTts';
 
 type ScreenName = 'landing' | 'portfolio' | 'ai';
@@ -53,15 +53,15 @@ function App() {
   }, []);
 
   if (activeScreen === 'portfolio') {
-    return <PortfolioScreen onNavigateBack={navigateToLanding} />;
+    return <PortfolioPage onNavigateBack={navigateToLanding} />;
   }
 
   if (activeScreen === 'ai') {
-    return <AiScreen onNavigateBack={navigateToLanding} />;
+    return <AiConversationPage onNavigateBack={navigateToLanding} />;
   }
 
   return (
-    <LandingScreen
+    <LandingPage
       onNavigatePortfolio={navigateToPortfolio}
       onNavigateAi={navigateToAi}
     />

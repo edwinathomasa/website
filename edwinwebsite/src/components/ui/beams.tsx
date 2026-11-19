@@ -328,11 +328,10 @@ export const Beams = memo(function Beams({
     gl.uniform3fv(uColors, flatColors);
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const width = container.clientWidth || window.innerWidth;
       const height = container.clientHeight || window.innerHeight;
-      canvas.width = Math.floor(width * dpr);
-      canvas.height = Math.floor(height * dpr);
+      canvas.width = Math.floor(width);
+      canvas.height = Math.floor(height);
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(uResolution, canvas.width, canvas.height);
     };

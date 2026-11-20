@@ -164,41 +164,43 @@ const FRAGMENT_SHADER = `
       float pathY = baseOffset * fanScale + curveArch;
       float dist = abs(p.y - pathY);
 
-      // Thin core line + lateral glow halo
-      float lineCore = smoothstep(0.011, 0.0012, dist);
-      float lineHalo = exp(-dist * (36.0 / (0.35 + glowAmt * 2.4))) * (0.18 + glowAmt * 0.95);
-      float crossProfile = lineCore + lineHalo;
+      if (dist < 0.14) {
+        // Thin core line + lateral glow halo
+        float lineCore = smoothstep(0.011, 0.0012, dist);
+        float lineHalo = exp(-dist * (36.0 / (0.35 + glowAmt * 2.4))) * (0.18 + glowAmt * 0.95);
+        float crossProfile = lineCore + lineHalo;
 
-      if (crossProfile > 0.0005) {
-        vec3 beamColor = pickColor(fi + floor(h3 * float(uColorCount)));
+        if (crossProfile > 0.001) {
+          vec3 beamColor = pickColor(fi + floor(h3 * float(uColorCount)));
 
-        // 1. Underlying permanent track line
-        vec3 trackContribution = beamColor * (lineCore * 0.55 + lineHalo * 0.25) * trackOpacity;
+          // 1. Underlying permanent track line
+          vec3 trackContribution = beamColor * (lineCore * 0.55 + lineHalo * 0.25) * trackOpacity;
 
-        // 2. Traveling light beam (bright head + halo + fading tail)
-        float lineSpeed = uSpeed * (0.22 + 0.16 * h2);
-        float cycleRate = clamp(uFrequency, 0.15, 2.5) * (0.55 + 0.45 * h3);
-        float phase = fract(u * cycleRate - uTime * lineSpeed + h1);
+          // 2. Traveling light beam (bright head + halo + fading tail)
+          float lineSpeed = uSpeed * (0.22 + 0.16 * h2);
+          float cycleRate = clamp(uFrequency, 0.15, 2.5) * (0.55 + 0.45 * h3);
+          float phase = fract(u * cycleRate - uTime * lineSpeed + h1);
 
-        // phase near 0 is the leading head; phase in (0..beamLen) is the fading tail
-        float inTrail = step(phase, beamLen);
-        float tailProgress = 1.0 - clamp(phase / beamLen, 0.0, 1.0);
-        float tailEnvelope = pow(tailProgress, 2.15) * smoothstep(0.0, 0.035, phase) * inTrail;
+          // phase near 0 is the leading head; phase in (0..beamLen) is the fading tail
+          float inTrail = step(phase, beamLen);
+          float tailProgress = 1.0 - clamp(phase / beamLen, 0.0, 1.0);
+          float tailEnvelope = pow(tailProgress, 2.15) * smoothstep(0.0, 0.035, phase) * inTrail;
 
-        // Bright leading head & head halo
-        float headDist = min(phase, 1.0 - phase);
-        float headGlow = exp(-headDist * 52.0) * (1.1 + glowAmt * 0.8);
+          // Bright leading head & head halo
+          float headDist = min(phase, 1.0 - phase);
+          float headGlow = exp(-headDist * 52.0) * (1.1 + glowAmt * 0.8);
 
-        // Smooth edge fade at container boundaries
-        float edgeFade = smoothstep(-0.18, 0.08, u) * (1.0 - smoothstep(0.92, 1.18, u));
+          // Smooth edge fade at container boundaries
+          float edgeFade = smoothstep(-0.18, 0.08, u) * (1.0 - smoothstep(0.92, 1.18, u));
 
-        vec3 pulseColor =
-          mix(beamColor, vec3(1.0), clamp(headGlow * 0.68, 0.0, 0.92)) *
-          (tailEnvelope * 0.95 + headGlow * 1.15) *
-          crossProfile *
-          edgeFade;
+          vec3 pulseColor =
+            mix(beamColor, vec3(1.0), clamp(headGlow * 0.68, 0.0, 0.92)) *
+            (tailEnvelope * 0.95 + headGlow * 1.15) *
+            crossProfile *
+            edgeFade;
 
-        totalColor += trackContribution + pulseColor;
+          totalColor += trackContribution + pulseColor;
+        }
       }
     }
 
@@ -254,8 +256,9 @@ export const Beams = memo(function Beams({
     const gl =
       canvas.getContext('webgl', {
         alpha: true,
-        antialias: true,
+        antialias: false,
         premultipliedAlpha: false,
+        powerPreference: 'low-power',
       }) ||
       (canvas.getContext('experimental-webgl') as WebGLRenderingContext | null);
 
@@ -330,8 +333,8 @@ export const Beams = memo(function Beams({
     const resize = () => {
       const width = container.clientWidth || window.innerWidth;
       const height = container.clientHeight || window.innerHeight;
-      canvas.width = Math.floor(width);
-      canvas.height = Math.floor(height);
+      canvas.width = Math.max(1, Math.floor(width * 0.75));
+      canvas.height = Math.max(1, Math.floor(height * 0.75));
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(uResolution, canvas.width, canvas.height);
     };

@@ -10,6 +10,13 @@
   --accent-green: #076003;
   --accent-amber: #D97706;
 
+  /* Background Beams Palette */
+  --beam-cyan: #67e8f9;
+  --beam-indigo: #6d5cff;
+  --beam-fuchsia: #d946ef;
+  --beam-crimson: #FC0B1C;
+  --beam-cobalt: #0A66C2;
+
   /* Cool Charcoal-Violet Shadow Base for 3D Z-Axis Depth */
   --shadow-tint: 24, 24, 34;
 
@@ -17,10 +24,9 @@
   --text-soft: rgba(24, 24, 27, 0.9);
   --glass-border-subtle: rgba(24, 24, 27, 0.10);
 
-  /* 3D Embossed Text Elevation */
-  --text-3d-heading: 0 1px 0 #FFFFFF, 0 2px 0 rgba(255, 255, 255, 0.72),
-    0 3px 6px rgba(var(--shadow-tint), 0.16);
-  --text-3d-body: 0 1px 0 rgba(255, 255, 255, 0.85);
+  /* 3D Embossed Text Elevation (Simplified for instant scroll rasterization) */
+  --text-3d-heading: none;
+  --text-3d-body: none;
 
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -82,123 +88,38 @@ body {
   pointer-events: none;
 }
 
-/* Layer 1 (.depth-layer-1 — Curved-Out Main 3D Section Slabs) */
+/* Layer 1 (.depth-layer-1 — Main Section Slabs) */
 .depth-layer-1 {
   position: relative;
-  background: linear-gradient(
-    165deg,
-    rgba(255, 255, 255, 0.82) 0%,
-    rgba(255, 255, 255, 0.62) 55%,
-    rgba(236, 234, 245, 0.72) 100%
-  );
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-top: 2px solid #FFFFFF;
-  border-left: 2px solid rgba(255, 255, 255, 0.92);
-  border-right: 2px solid rgba(var(--shadow-tint), 0.10);
-  border-bottom: 3px solid rgba(var(--shadow-tint), 0.18);
-  box-shadow:
-    inset 0 3px 6px rgba(255, 255, 255, 0.98),
-    inset 0 10px 20px rgba(255, 255, 255, 0.55),
-    inset 0 -4px 8px rgba(var(--shadow-tint), 0.09),
-    inset -3px 0 6px rgba(var(--shadow-tint), 0.05),
-    0 1px 0 rgba(255, 255, 255, 0.95),
-    0 2px 0 rgba(226, 224, 236, 0.95),
-    0 3px 0 rgba(208, 206, 220, 0.9),
-    0 4px 0 rgba(190, 188, 204, 0.85),
-    0 8px 16px -2px rgba(var(--shadow-tint), 0.12),
-    0 22px 38px -8px rgba(var(--shadow-tint), 0.14),
-    0 36px 64px -16px rgba(var(--shadow-tint), 0.10);
+  background: rgba(246, 245, 252, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-bottom: 2px solid rgba(var(--shadow-tint), 0.16);
+  box-shadow: 0 4px 12px rgba(var(--shadow-tint), 0.12);
 }
 
-.depth-layer-1::before {
-  content: '';
-  position: absolute;
-  inset: 4px;
-  border-radius: inherit;
-  pointer-events: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.88);
-  border-left: 1px solid rgba(255, 255, 255, 0.72);
-  border-right: 1px solid rgba(var(--shadow-tint), 0.06);
-  border-bottom: 1px solid rgba(var(--shadow-tint), 0.10);
-}
-
-/* Layer 2 (.depth-layer-2 — Protruding Nested 3D Subcards & Experience Blocks) */
+/* Layer 2 (.depth-layer-2 — Nested Subcards & Experience Blocks) */
 .depth-layer-2 {
   position: relative;
-  background: linear-gradient(
-    168deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.84) 58%,
-    rgba(241, 239, 248, 0.90) 100%
-  );
-  border-top: 2px solid #FFFFFF;
-  border-left: 1.5px solid rgba(255, 255, 255, 0.95);
-  border-right: 1.5px solid rgba(var(--shadow-tint), 0.10);
-  border-bottom: 2.5px solid rgba(var(--shadow-tint), 0.18);
-  box-shadow:
-    inset 0 2px 4px #FFFFFF,
-    inset 0 7px 14px rgba(255, 255, 255, 0.72),
-    inset 0 -3px 6px rgba(var(--shadow-tint), 0.08),
-    0 1px 0 #FFFFFF,
-    0 2px 0 rgba(222, 220, 232, 0.95),
-    0 3px 0 rgba(202, 200, 214, 0.9),
-    0 6px 12px -2px rgba(var(--shadow-tint), 0.11),
-    0 14px 26px -6px rgba(var(--shadow-tint), 0.13);
+  background: #FFFFFF;
+  border: 1px solid rgba(var(--shadow-tint), 0.08);
+  border-bottom: 2px solid rgba(var(--shadow-tint), 0.15);
+  box-shadow: 0 2px 6px rgba(var(--shadow-tint), 0.08);
 }
 
-.depth-layer-2::before {
-  content: '';
-  position: absolute;
-  inset: 3px;
-  border-radius: inherit;
-  pointer-events: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.92);
-  border-bottom: 1px solid rgba(var(--shadow-tint), 0.07);
-}
-
-/* Layer 3 (.depth-layer-3 — High-Relief Extruded 3D Pills, Tags, Badges & Buttons) */
+/* Layer 3 (.depth-layer-3 — Pills, Tags, Badges & Buttons) */
 .depth-layer-3 {
   position: relative;
-  background: linear-gradient(
-    180deg,
-    #FFFFFF 0%,
-    rgba(248, 247, 252, 0.96) 65%,
-    rgba(236, 234, 244, 0.94) 100%
-  );
-  border-top: 1.5px solid #FFFFFF;
-  border-left: 1.5px solid rgba(255, 255, 255, 0.95);
-  border-right: 1.5px solid rgba(var(--shadow-tint), 0.12);
-  border-bottom: 2px solid rgba(var(--shadow-tint), 0.22);
-  box-shadow:
-    inset 0 2px 2px #FFFFFF,
-    inset 0 -2px 3px rgba(var(--shadow-tint), 0.08),
-    0 1px 0 rgba(218, 216, 228, 0.95),
-    0 2px 0 rgba(196, 194, 208, 0.9),
-    0 4px 8px rgba(var(--shadow-tint), 0.11),
-    0 9px 18px -4px rgba(var(--shadow-tint), 0.13);
-  text-shadow: var(--text-3d-body);
+  background: #FFFFFF;
+  border: 1px solid rgba(var(--shadow-tint), 0.12);
+  border-bottom: 1.5px solid rgba(var(--shadow-tint), 0.18);
+  box-shadow: 0 1px 2px rgba(var(--shadow-tint), 0.06);
 }
 
-/* Recessed Wells (.depth-recessed — Concave Curved-In Cavities, Tracks & Input Wells) */
+/* Recessed Wells (.depth-recessed — Outer Containers & Tracks) */
 .depth-recessed {
   position: relative;
-  background: linear-gradient(
-    175deg,
-    rgba(var(--shadow-tint), 0.075) 0%,
-    rgba(var(--shadow-tint), 0.03) 48%,
-    rgba(255, 255, 255, 0.58) 100%
-  );
-  border-top: 2px solid rgba(var(--shadow-tint), 0.18);
-  border-left: 2px solid rgba(var(--shadow-tint), 0.12);
-  border-right: 1.5px solid rgba(255, 255, 255, 0.85);
-  border-bottom: 2px solid #FFFFFF;
-  box-shadow:
-    inset 0 5px 10px rgba(var(--shadow-tint), 0.13),
-    inset 0 2px 4px rgba(var(--shadow-tint), 0.15),
-    inset 3px 0 6px rgba(var(--shadow-tint), 0.07),
-    inset 0 -3px 6px rgba(255, 255, 255, 0.92),
-    0 1px 0 #FFFFFF;
+  background: rgba(235, 234, 244, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.45);
 }
 
 /* ==========================================================================
@@ -233,16 +154,6 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  animation: screen-fade-in 0.3s ease-out;
-}
-
-@keyframes screen-fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 .landing-viewport {
@@ -331,8 +242,6 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  transform: translateZ(0);
-  will-change: scroll-position;
   scrollbar-width: thin;
   scrollbar-color: rgba(126, 34, 206, 0.36) transparent;
 }
@@ -635,8 +544,6 @@ a.glass-meta-pill:hover {
 .section-icon {
   color: var(--accent-cerulean);
   flex-shrink: 0;
-  filter: drop-shadow(0 1px 0 #FFFFFF)
-    drop-shadow(0 2px 3px rgba(var(--shadow-tint), 0.16));
 }
 
 .section-title {

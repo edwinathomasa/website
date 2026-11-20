@@ -2,12 +2,12 @@ import { Beams } from '@/components/ui/beams';
 import { memo } from 'react';
 
 const BEAM_COLORS = [
-  '#67e8f9',
-  '#6d5cff',
-  '#d946ef',
-  '#FC0B1C',
-  '#0A66C2',
-  '#0A66C2',
+  'var(--beam-cyan)',
+  'var(--beam-indigo)',
+  'var(--beam-fuchsia)',
+  'var(--beam-crimson)',
+  'var(--beam-cobalt)',
+  'var(--beam-cobalt)',
 ] as const;
 
 const ParticlesBackdrop = memo(function ParticlesBackdrop() {
@@ -17,7 +17,7 @@ const ParticlesBackdrop = memo(function ParticlesBackdrop() {
         className="min-h-[32rem]"
         angle={-1}
         colors={BEAM_COLORS}
-        count={68}
+        count={128}
         curve={1.75}
         fan={0}
         frequency={1.05}

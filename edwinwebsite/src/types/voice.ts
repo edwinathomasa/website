@@ -1,5 +1,7 @@
 export type VoiceState = 'idle' | 'listening' | 'thinking' | 'speaking';
 
+export type AiProvider = 'gemini' | 'openai' | 'claude';
+
 export interface ChatTurn {
   readonly id: string;
   readonly role: 'user' | 'assistant';

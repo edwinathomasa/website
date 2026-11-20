@@ -19,12 +19,12 @@ export interface BeamsProps {
 }
 
 const DEFAULT_COLORS: readonly string[] = [
-  '#67e8f9',
-  '#6d5cff',
-  '#d946ef',
-  '#FC0B1C',
-  '#0A66C2',
-  '#0A66C2',
+  'var(--beam-cyan)',
+  'var(--beam-indigo)',
+  'var(--beam-fuchsia)',
+  'var(--beam-crimson)',
+  'var(--beam-cobalt)',
+  'var(--beam-cobalt)',
 ];
 
 function resolveCssColor(input: string): string {
@@ -134,12 +134,12 @@ const FRAGMENT_SHADER = `
     float u = (p.x / max(aspect, 1.0)) * 0.5 + 0.5;
 
     vec3 totalColor = vec3(0.0);
-    float maxCount = clamp(uCount, 1.0, 64.0);
+    float maxCount = clamp(uCount, 1.0, 128.0);
     float beamLen = clamp(uLength, 0.05, 0.95);
     float glowAmt = clamp(uGlow, 0.01, 1.0);
     float trackOpacity = clamp(uTracks, 0.0, 1.0) * 0.16;
 
-    for (int i = 0; i < 64; i++) {
+    for (int i = 0; i < 128; i++) {
       if (float(i) >= maxCount) break;
       float fi = float(i);
       float normIdx = (maxCount > 1.0) ? (fi / (maxCount - 1.0)) - 0.5 : 0.0;

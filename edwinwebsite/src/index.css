@@ -10,6 +10,13 @@
   --accent-green: #076003;
   --accent-amber: #D97706;
 
+  /* Background Beams Palette */
+  --beam-cyan: #67e8f9;
+  --beam-indigo: #6d5cff;
+  --beam-fuchsia: #d946ef;
+  --beam-crimson: #FC0B1C;
+  --beam-cobalt: #0A66C2;
+
   /* Cool Charcoal-Violet Shadow Base for 3D Z-Axis Depth */
   --shadow-tint: 24, 24, 34;
 

@@ -1,4 +1,4 @@
-import { API_CONFIG, ENV } from '../../constants/config';
+import { API_CONFIG } from '../../constants/config';
 import { STRINGS } from '../../constants/strings';
 import { formatPeriodsInText } from '../../utils/speechFormat';
 
@@ -49,38 +49,26 @@ export function stopActiveSpeech(): void {
   }
 }
 
-async function fetchElevenLabsAudioBlob(
-  text: string,
-  apiKey: string,
-  voiceId: string
-): Promise<Blob> {
-  const response = await fetch(
-    `${API_CONFIG.ELEVENLABS_BASE_URL}/${encodeURIComponent(voiceId)}?output_format=mp3_44100_128`,
-    {
-      method: 'POST',
-      headers: {
-        Accept: 'audio/mpeg',
-        'Content-Type': 'application/json',
-        'xi-api-key': apiKey,
-      },
-      body: JSON.stringify({
-        text,
-        model_id: API_CONFIG.ELEVENLABS_MODEL_ID,
-        voice_settings: {
-          stability: API_CONFIG.ELEVENLABS_STABILITY,
-          similarity_boost: API_CONFIG.ELEVENLABS_SIMILARITY_BOOST,
-        },
-      }),
-    }
-  );
+async function fetchTtsAudioBlob(text: string): Promise<Blob> {
+  const response = await fetch(API_CONFIG.TTS_ENDPOINT, {
+    method: 'POST',
+    headers: {
+      Accept: 'audio/mpeg',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ text }),
+  });
 
   if (!response.ok) {
     let detailMessage: string = STRINGS.errors.httpStatus(response.status);
     try {
       const errJson = (await response.json()) as {
-        detail?: { message?: string; status?: string } | string;
+        error?: string;
+        detail?: { message?: string } | string;
       };
-      if (typeof errJson?.detail === 'string') {
+      if (typeof errJson?.error === 'string') {
+        detailMessage = errJson.error;
+      } else if (typeof errJson?.detail === 'string') {
         detailMessage = errJson.detail;
       } else if (errJson?.detail?.message) {
         detailMessage = errJson.detail.message;
@@ -142,10 +130,6 @@ export async function speakWithElevenLabs(
   stopActiveSpeech();
 
   const spokenText = formatPeriodsInText(text);
-  const blob = await fetchElevenLabsAudioBlob(
-    spokenText,
-    ENV.ELEVENLABS_API_KEY,
-    ENV.ELEVENLABS_VOICE_ID
-  );
+  const blob = await fetchTtsAudioBlob(spokenText);
   await playBlobOnSharedAudio(blob, onStart, onEnd);
 }

@@ -4,7 +4,7 @@ import { STRINGS } from '../constants/strings';
 import {
   askProfileAssistant,
   transcribeAudioBlob,
-} from '../services/ai/geminiService';
+} from '../services/ai/aiService';
 import {
   speakWithElevenLabs,
   stopActiveSpeech,

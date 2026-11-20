@@ -10,7 +10,17 @@
         "list of companies",
         "which companies"
       ],
-      "answer": "I have worked in {{companyCount}} companies: {{companyList}}."
+      "answer": "I have been employed by {{companyCount}} companies: {{companyList}}. Through {{currentCompany}}, I have worked as a consultant on client projects for {{clientCount}} companies: {{clientList}}."
+    },
+    {
+      "question": "Tell me about your job experience",
+      "triggers": [
+        "job experience",
+        "job experiences",
+        "work experience",
+        "work experiences"
+      ],
+      "answer": "I have {{experienceDuration}} of experience as a {{title}} across {{sectorList}}. I've worked at {{directCompanyList}}, as well as consulting assignments through {{currentCompany}} for clients including {{clientList}} as {{roleList}}."
     },
     {
       "question": "How many years of experience do you have?",
@@ -19,7 +29,7 @@
         "years of experience",
         "total experience"
       ],
-      "answer": "I have over 10 years of software engineering experience across MedTech, Automotive, IoT, and Logistics sectors."
+      "answer": "I have {{experienceDuration}} of professional experience across {{sectorList}} sectors."
     },
     {
       "question": "Where are you located?",
@@ -40,7 +50,7 @@
         "where do you work now",
         "working right now"
       ],
-      "answer": "I am currently working as a {{currentRole}} at {{currentCompany}} in {{currentLocation}} ({{currentPeriod}})."
+      "answer": "I am currently employed by {{currentCompany}} as a {{currentRole}} ({{currentPeriod}}), working on assignment as a {{currentAssignmentRole}} at {{currentAssignmentClient}} in {{currentLocation}} ({{currentAssignmentPeriod}})."
     },
     {
       "question": "What is your educational background?",
@@ -103,7 +113,7 @@
         "hello",
         "hi"
       ],
-      "answer": "Hi there! I'm {{name}}, a {{title}} based in {{location}} with over 10 years of experience in native Android, iOS, Kotlin Multiplatform, React Native, and Bluetooth Low Energy systems. How can I help you today?"
+      "answer": "Hi there! I'm {{name}}, a {{title}} based in {{location}} with {{experienceDuration}} of experience in native Android, iOS, Kotlin Multiplatform, React Native, and Bluetooth Low Energy systems. How can I help you today?"
     },
     {
       "question": "How can I contact or hire you?",
@@ -156,7 +166,7 @@
         "work",
         "career"
       ],
-      "answer": "I have worked across {{companyCount}} companies ({{companyList}}) over my 10+ year career in MedTech, Automotive, IoT, and Logistics."
+      "answer": "I have been employed across {{companyCount}} companies ({{companyList}}), including consulting assignments through {{currentCompany}} at {{clientList}}, with {{experienceDuration}} of experience across {{sectorList}}."
     }
   ],
   "defaultFallback": "I'm {{name}}, a {{title}} in {{location}}. I specialize in Android, iOS, Kotlin Multiplatform, React Native, BLE, and AOSP. Feel free to ask about my work at Niox, EcarX, Renz, my skills, or how to get in touch!"

@@ -1,10 +1,11 @@
 import { API_CONFIG, STATIC_FALLBACK_ENV } from '../../constants/config';
 import { matchCustomResponse } from '../../data/customResponses';
-import type { AiProvider, ChatTurn } from '../../types/voice';
+import type { AiProvider, ChatMessage, ChatTurn } from '../../types/voice';
 import { formatPeriodsInText } from '../../utils/speechFormat';
 import {
   SYSTEM_INSTRUCTION,
   buildLocalFallbackAnswer,
+  hasContextualFollowUpReference,
 } from './profileKnowledge';
 
 export interface AskAssistantOptions {
@@ -43,6 +44,44 @@ function resolveStaticProviders(requested?: AiProvider): AiProvider[] {
   return ordered;
 }
 
+/**
+ * Converts UI `ChatTurn[]` history into provider-agnostic `{ role, content }[]`
+ * messages, stripping any leading greeting that isn't a user turn when needed.
+ */
+export function toChatMessages(history: readonly ChatTurn[]): ChatMessage[] {
+  return history
+    .map((turn) => ({
+      role: turn.role,
+      content: turn.text.trim(),
+    }))
+    .filter((msg) => msg.content.length > 0);
+}
+
+/**
+ * Ensures alternating `user` / `assistant` turns starting with a `user` turn
+ * (required by Claude `/v1/messages` and recommended for Gemini `contents`).
+ */
+function buildAlternatingMessages(
+  messages: readonly ChatMessage[]
+): ChatMessage[] {
+  const normalized: Array<{ role: 'user' | 'assistant'; content: string }> = [];
+
+  for (const msg of messages) {
+    const content = msg.content.trim();
+    if (!content) continue;
+    if (normalized.length === 0 && msg.role !== 'user') continue;
+
+    const prev = normalized[normalized.length - 1];
+    if (prev && prev.role === msg.role) {
+      prev.content = `${prev.content}\n${content}`;
+    } else {
+      normalized.push({ role: msg.role, content });
+    }
+  }
+
+  return normalized;
+}
+
 function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -57,8 +96,7 @@ function blobToBase64(blob: Blob): Promise<string> {
 }
 
 async function queryStaticChatFallback(
-  userQuestion: string,
-  history: readonly ChatTurn[],
+  messages: readonly ChatMessage[],
   options?: AskAssistantOptions
 ): Promise<string> {
   const providers = resolveStaticProviders(options?.provider);
@@ -68,13 +106,11 @@ async function queryStaticChatFallback(
     try {
       if (provider === 'gemini' && STATIC_FALLBACK_ENV.GEMINI_API_KEY) {
         const model = options?.model || envModel || 'gemini-2.5-flash';
-        const contents = [
-          ...history.map((turn) => ({
-            role: turn.role === 'user' ? 'user' : 'model',
-            parts: [{ text: turn.text }],
-          })),
-          { role: 'user', parts: [{ text: userQuestion }] },
-        ];
+        const alternating = buildAlternatingMessages(messages);
+        const contents = alternating.map((msg) => ({
+          role: msg.role === 'user' ? 'user' : 'model',
+          parts: [{ text: msg.content }],
+        }));
         const res = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
             model
@@ -118,8 +154,7 @@ async function queryStaticChatFallback(
             model,
             messages: [
               { role: 'system', content: SYSTEM_INSTRUCTION },
-              ...history.map((t) => ({ role: t.role, content: t.text })),
-              { role: 'user', content: userQuestion },
+              ...messages.map((m) => ({ role: m.role, content: m.content })),
             ],
             temperature: 0.6,
             max_tokens: 220,
@@ -135,20 +170,7 @@ async function queryStaticChatFallback(
       } else if (provider === 'claude' && STATIC_FALLBACK_ENV.CLAUDE_API_KEY) {
         const model =
           options?.model || envModel || 'claude-3-5-sonnet-latest';
-        const normalized: Array<{
-          role: 'user' | 'assistant';
-          content: string;
-        }> = [];
-        for (const t of history) {
-          if (normalized.length === 0 && t.role !== 'user') continue;
-          const prev = normalized[normalized.length - 1];
-          if (prev && prev.role === t.role) {
-            prev.content = `${prev.content}\n${t.text}`;
-          } else {
-            normalized.push({ role: t.role, content: t.text });
-          }
-        }
-        normalized.push({ role: 'user', content: userQuestion });
+        const normalized = buildAlternatingMessages(messages);
 
         const res = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
@@ -269,20 +291,34 @@ export async function transcribeAudioBlob(audioBlob: Blob): Promise<string> {
 
 /**
  * Queries the portfolio AI assistant agnostic of the underlying LLM provider
- * (Gemini, OpenAI, or Claude configured on the server or Amplify static build).
+ * (Gemini, OpenAI, or Claude) with full multi-turn conversation history and
+ * complete `profile.ts` grounding.
  */
 export async function askProfileAssistant(
   userQuestion: string,
   history: readonly ChatTurn[] = [],
   options?: AskAssistantOptions
 ): Promise<string> {
-  // 1. Check if the question matches a deterministic custom Q&A rule first
-  const customAnswer = matchCustomResponse(userQuestion);
-  if (customAnswer) {
-    return customAnswer;
+  const priorMessages = toChatMessages(history);
+  const conversationMessages: ChatMessage[] = [
+    ...priorMessages,
+    { role: 'user', content: userQuestion.trim() },
+  ];
+
+  // 1. Check deterministic custom Q&A rules only when the prompt is NOT a
+  //    contextual follow-up referencing prior turns (e.g. "there", "those tools").
+  const isContextualFollowUp =
+    priorMessages.length > 0 && hasContextualFollowUpReference(userQuestion);
+
+  if (!isContextualFollowUp) {
+    const customAnswer = matchCustomResponse(userQuestion);
+    if (customAnswer) {
+      return customAnswer;
+    }
   }
 
-  // 2. Otherwise query the model-agnostic server endpoint (/api/chat)
+  // 2. Query the model-agnostic server endpoint (/api/chat) with full messages
+  //    history and the full serialized `profile.ts` system instruction.
   try {
     const response = await fetch(API_CONFIG.CHAT_ENDPOINT, {
       method: 'POST',
@@ -290,8 +326,7 @@ export async function askProfileAssistant(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        question: userQuestion,
-        history,
+        messages: conversationMessages,
         systemInstruction: SYSTEM_INSTRUCTION,
         provider: options?.provider,
         model: options?.model,
@@ -315,13 +350,13 @@ export async function askProfileAssistant(
 
   // 3. Static-host build fallback (e.g. AWS Amplify static CDN without /api/* Node server)
   const staticReply = await queryStaticChatFallback(
-    userQuestion,
-    history,
+    conversationMessages,
     options
   );
   if (staticReply) {
     return formatPeriodsInText(staticReply);
   }
 
-  return buildLocalFallbackAnswer(userQuestion);
+  // 4. Context-aware local fallback using prior turns + full profile data
+  return buildLocalFallbackAnswer(userQuestion, priorMessages);
 }

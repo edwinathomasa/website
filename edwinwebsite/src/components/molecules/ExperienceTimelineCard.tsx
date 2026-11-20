@@ -19,6 +19,7 @@ const ExperienceTimelineCard = memo(function ExperienceTimelineCard({
           <h3 className="timeline-role">{experience.role}</h3>
           <p className="timeline-company">
             {experience.company}
+            {experience.client ? ` · Client: ${experience.client}` : ''}
             {experience.location ? ` · ${experience.location}` : ''}
           </p>
         </div>
@@ -43,6 +44,48 @@ const ExperienceTimelineCard = memo(function ExperienceTimelineCard({
               <GlassTag key={tool} label={tool} variant="sm" />
             ))}
           </div>
+        </div>
+      )}
+
+      {experience.assignments && experience.assignments.length > 0 && (
+        <div className="timeline-assignments">
+          <span className="assignments-heading">
+            Client Assignments ({experience.assignments.length})
+          </span>
+          {experience.assignments.map((assignment) => (
+            <div
+              key={`${assignment.client}-${assignment.period}`}
+              className="assignment-card depth-recessed"
+            >
+              <div className="timeline-card-header">
+                <div>
+                  <h4 className="assignment-client">
+                    {assignment.client}
+                    <span className="assignment-role"> · {assignment.role}</span>
+                  </h4>
+                </div>
+                <PeriodBadge text={assignment.period} />
+              </div>
+
+              <p className="timeline-overview">{assignment.description}</p>
+
+              {assignment.highlights && assignment.highlights.length > 0 && (
+                <ul className="timeline-bullets">
+                  {assignment.highlights.map((point) => (
+                    <li key={point}>{point}</li>
+                  ))}
+                </ul>
+              )}
+
+              {assignment.tools && assignment.tools.length > 0 && (
+                <div className="tag-cloud">
+                  {assignment.tools.map((tool) => (
+                    <GlassTag key={tool} label={tool} variant="sm" />
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       )}
     </GlassSlab>

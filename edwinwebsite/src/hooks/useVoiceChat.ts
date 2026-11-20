@@ -34,6 +34,7 @@ export interface UseVoiceChatResult {
   readonly session: VoiceSessionStatus;
   readonly messages: readonly ChatTurn[];
   readonly toggleVoiceAction: () => void;
+  readonly clearChat: () => void;
 }
 
 export function useVoiceChat(): UseVoiceChatResult {
@@ -111,6 +112,19 @@ export function useVoiceChat(): UseVoiceChatResult {
     dispatch({ type: 'STOP_TO_IDLE' });
   }, []);
 
+  const clearChat = useCallback(() => {
+    stopAll();
+    const initialMessages: readonly ChatTurn[] = [
+      {
+        id: 'welcome-turn',
+        role: 'assistant',
+        text: STRINGS.voice.welcomeMessage(profile.name),
+      },
+    ];
+    messagesRef.current = initialMessages;
+    setMessages(initialMessages);
+  }, [profile.name, stopAll]);
+
   const askQuestion = useCallback(async (questionText: string) => {
     const trimmed = questionText.trim();
     if (!trimmed) return;
@@ -127,18 +141,22 @@ export function useVoiceChat(): UseVoiceChatResult {
     stopActiveSpeech();
 
     const historySnapshot = messagesRef.current;
-    setMessages((prev) => [
-      ...prev,
+    const withUserTurn: readonly ChatTurn[] = [
+      ...historySnapshot,
       { id: createTurnId(), role: 'user', text: trimmed },
-    ]);
+    ];
+    messagesRef.current = withUserTurn;
+    setMessages(withUserTurn);
     dispatch({ type: 'START_THINKING', query: trimmed });
 
     try {
       const answer = await askProfileAssistant(trimmed, historySnapshot);
-      setMessages((prev) => [
-        ...prev,
+      const withAssistantTurn: readonly ChatTurn[] = [
+        ...messagesRef.current,
         { id: createTurnId(), role: 'assistant', text: answer },
-      ]);
+      ];
+      messagesRef.current = withAssistantTurn;
+      setMessages(withAssistantTurn);
 
       await speakWithElevenLabs(
         answer,
@@ -450,5 +468,6 @@ export function useVoiceChat(): UseVoiceChatResult {
     session,
     messages,
     toggleVoiceAction,
+    clearChat,
   };
 }

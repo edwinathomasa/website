@@ -7,10 +7,17 @@ type ServerAiProvider = 'gemini' | 'openai' | 'claude';
 
 interface ChatHistoryTurn {
   readonly role: 'user' | 'assistant';
-  readonly text: string;
+  readonly text?: string;
+  readonly content?: string;
+}
+
+interface NormalizedChatMessage {
+  readonly role: 'user' | 'assistant';
+  readonly content: string;
 }
 
 interface ChatRequestPayload {
+  readonly messages?: readonly NormalizedChatMessage[];
   readonly question?: string;
   readonly history?: readonly ChatHistoryTurn[];
   readonly systemInstruction?: string;
@@ -49,37 +56,59 @@ function sendJson(res: ServerResponse, status: number, payload: unknown): void {
 }
 
 /**
+ * Normalizes incoming payload (`messages` array or legacy `history` + `question`)
+ * into an ordered provider-agnostic `{ role, content }[]` list.
+ */
+function extractConversationMessages(
+  body: ChatRequestPayload
+): NormalizedChatMessage[] {
+  if (Array.isArray(body.messages) && body.messages.length > 0) {
+    return body.messages
+      .map((msg) => ({
+        role: msg.role,
+        content: (msg.content ?? '').trim(),
+      }))
+      .filter((msg) => msg.content.length > 0);
+  }
+
+  const turns: NormalizedChatMessage[] = (body.history ?? [])
+    .map((turn) => ({
+      role: turn.role,
+      content: (turn.content ?? turn.text ?? '').trim(),
+    }))
+    .filter((turn) => turn.content.length > 0);
+
+  const trimmedQuestion = (body.question ?? '').trim();
+  if (trimmedQuestion) {
+    turns.push({ role: 'user', content: trimmedQuestion });
+  }
+
+  return turns;
+}
+
+/**
  * Ensures message history starts with a 'user' turn and strictly alternates
- * roles, satisfying Anthropic Claude's /v1/messages contract.
+ * roles, satisfying Anthropic Claude's /v1/messages and Gemini's contents contracts.
  */
 function buildAlternatingMessages(
-  history: readonly ChatHistoryTurn[],
-  question: string
+  messages: readonly NormalizedChatMessage[]
 ): Array<{ role: 'user' | 'assistant'; content: string }> {
   const normalized: Array<{ role: 'user' | 'assistant'; content: string }> = [];
 
-  for (const turn of history) {
-    const content = turn.text?.trim();
+  for (const msg of messages) {
+    const content = msg.content.trim();
     if (!content) continue;
 
-    if (normalized.length === 0 && turn.role !== 'user') {
+    if (normalized.length === 0 && msg.role !== 'user') {
       continue;
     }
 
     const prev = normalized[normalized.length - 1];
-    if (prev && prev.role === turn.role) {
+    if (prev && prev.role === msg.role) {
       prev.content = `${prev.content}\n${content}`;
     } else {
-      normalized.push({ role: turn.role, content });
+      normalized.push({ role: msg.role, content });
     }
-  }
-
-  const trimmedQuestion = question.trim();
-  const last = normalized[normalized.length - 1];
-  if (last && last.role === 'user') {
-    last.content = `${last.content}\n${trimmedQuestion}`;
-  } else {
-    normalized.push({ role: 'user', content: trimmedQuestion });
   }
 
   return normalized;
@@ -153,25 +182,17 @@ function createServerApiPlugin(env: Record<string, string>): Plugin {
     return ordered;
   };
 
-  const chatWithGemini = async (
-    payload: Required<
-      Pick<ChatRequestPayload, 'question' | 'systemInstruction'>
-    > & {
-      history: readonly ChatHistoryTurn[];
-      model: string;
-    }
-  ): Promise<string> => {
+  const chatWithGemini = async (payload: {
+    messages: readonly NormalizedChatMessage[];
+    systemInstruction: string;
+    model: string;
+  }): Promise<string> => {
     const ai = new GoogleGenAI({ apiKey: geminiApiKey });
-    const contents = [
-      ...payload.history.map((turn) => ({
-        role: turn.role === 'user' ? ('user' as const) : ('model' as const),
-        parts: [{ text: turn.text }],
-      })),
-      {
-        role: 'user' as const,
-        parts: [{ text: payload.question }],
-      },
-    ];
+    const alternating = buildAlternatingMessages(payload.messages);
+    const contents = alternating.map((msg) => ({
+      role: msg.role === 'user' ? ('user' as const) : ('model' as const),
+      parts: [{ text: msg.content }],
+    }));
 
     const response = await ai.models.generateContent({
       model: payload.model,
@@ -186,23 +207,19 @@ function createServerApiPlugin(env: Record<string, string>): Plugin {
     return response.text?.trim() ?? '';
   };
 
-  const chatWithOpenAi = async (
-    payload: Required<
-      Pick<ChatRequestPayload, 'question' | 'systemInstruction'>
-    > & {
-      history: readonly ChatHistoryTurn[];
-      model: string;
-    }
-  ): Promise<string> => {
+  const chatWithOpenAi = async (payload: {
+    messages: readonly NormalizedChatMessage[];
+    systemInstruction: string;
+    model: string;
+  }): Promise<string> => {
     const messages = [
       ...(payload.systemInstruction
         ? [{ role: 'system' as const, content: payload.systemInstruction }]
         : []),
-      ...payload.history.map((turn) => ({
-        role: turn.role,
-        content: turn.text,
+      ...payload.messages.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
       })),
-      { role: 'user' as const, content: payload.question },
     ];
 
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -230,18 +247,12 @@ function createServerApiPlugin(env: Record<string, string>): Plugin {
     return data.choices?.[0]?.message?.content?.trim() ?? '';
   };
 
-  const chatWithClaude = async (
-    payload: Required<
-      Pick<ChatRequestPayload, 'question' | 'systemInstruction'>
-    > & {
-      history: readonly ChatHistoryTurn[];
-      model: string;
-    }
-  ): Promise<string> => {
-    const messages = buildAlternatingMessages(
-      payload.history,
-      payload.question
-    );
+  const chatWithClaude = async (payload: {
+    messages: readonly NormalizedChatMessage[];
+    systemInstruction: string;
+    model: string;
+  }): Promise<string> => {
+    const messages = buildAlternatingMessages(payload.messages);
 
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -304,8 +315,7 @@ function createServerApiPlugin(env: Record<string, string>): Plugin {
             return;
           }
 
-          const question = (body.question ?? '').trim();
-          const history = body.history ?? [];
+          const messages = extractConversationMessages(body);
           const systemInstruction = body.systemInstruction ?? '';
           const requestedProvider = normalizeProvider(body.provider);
           let lastError = 'AI request failed';
@@ -320,22 +330,19 @@ function createServerApiPlugin(env: Record<string, string>): Plugin {
               let text = '';
               if (provider === 'gemini') {
                 text = await chatWithGemini({
-                  question,
-                  history,
+                  messages,
                   systemInstruction,
                   model,
                 });
               } else if (provider === 'openai') {
                 text = await chatWithOpenAi({
-                  question,
-                  history,
+                  messages,
                   systemInstruction,
                   model,
                 });
               } else if (provider === 'claude') {
                 text = await chatWithClaude({
-                  question,
-                  history,
+                  messages,
                   systemInstruction,
                   model,
                 });

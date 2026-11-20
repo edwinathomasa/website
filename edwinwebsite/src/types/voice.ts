@@ -8,6 +8,11 @@ export interface ChatTurn {
   readonly text: string;
 }
 
+export interface ChatMessage {
+  readonly role: 'user' | 'assistant';
+  readonly content: string;
+}
+
 /**
  * Discriminated Union making impossible voice states unrepresentable:
  * - `error` only exists in the `idle` state

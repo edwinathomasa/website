@@ -3,14 +3,28 @@ export interface SkillCategory {
   readonly items: readonly string[];
 }
 
-export interface Experience {
+export interface ClientAssignment {
+  readonly client: string;
   readonly role: string;
-  readonly company: string;
+  readonly sector?: string;
   readonly location?: string;
   readonly period: string;
   readonly description: string;
   readonly highlights?: readonly string[];
   readonly tools?: readonly string[];
+}
+
+export interface Experience {
+  readonly role: string;
+  readonly company: string;
+  readonly client?: string;
+  readonly sector?: string;
+  readonly location?: string;
+  readonly period: string;
+  readonly description: string;
+  readonly highlights?: readonly string[];
+  readonly tools?: readonly string[];
+  readonly assignments?: readonly ClientAssignment[];
 }
 
 export interface Education {

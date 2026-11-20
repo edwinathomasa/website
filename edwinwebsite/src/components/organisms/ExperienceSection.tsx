@@ -18,7 +18,7 @@ const ExperienceSection = memo(function ExperienceSection({
       <SectionHeader
         icon={<FaBriefcase />}
         title={STRINGS.sections.experience}
-        countText={`${experience.length} Roles`}
+        countText={`${experience.length} Companies`}
       />
 
       <div className="experience-timeline">

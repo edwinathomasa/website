@@ -714,6 +714,39 @@ a.glass-meta-pill:hover {
   text-shadow: var(--text-3d-body);
 }
 
+.timeline-assignments {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-top: 0.9rem;
+}
+
+.assignments-heading {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent-cerulean);
+}
+
+.assignment-card {
+  padding: 0.95rem 1.05rem;
+  border-radius: 14px;
+  border-left: 3px solid var(--accent-cerulean);
+}
+
+.assignment-client {
+  margin: 0;
+  font-size: 0.96rem;
+  font-weight: 800;
+  color: var(--charcoal-ink);
+}
+
+.assignment-role {
+  font-weight: 600;
+  color: var(--slate-muted);
+}
+
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

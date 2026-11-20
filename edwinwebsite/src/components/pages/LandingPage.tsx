@@ -1,6 +1,5 @@
 import { memo } from 'react';
 import { unlockAudioPlayback } from '../../services/audio/elevenLabsTts';
-import ParticlesBackdrop from '../atoms/ParticlesBackdrop';
 import LandingTileButton from '../molecules/LandingTileButton';
 import LandingTemplate from '../templates/LandingTemplate';
 
@@ -14,7 +13,7 @@ const LandingPage = memo(function LandingPage({
   onNavigateAi,
 }: LandingPageProps) {
   return (
-    <LandingTemplate backdrop={<ParticlesBackdrop />}>
+    <LandingTemplate>
       <LandingTileButton label="Portfolio" onClick={onNavigatePortfolio} />
       <LandingTileButton
         label="AI"

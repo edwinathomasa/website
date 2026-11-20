@@ -1,11 +1,7 @@
 import { memo } from 'react';
 import { STRINGS } from '../../constants/strings';
 import { useVoiceChat } from '../../hooks/useVoiceChat';
-import {
-  PortfolioProvider,
-  usePortfolioState,
-} from '../../state/PortfolioContext';
-import ParticlesBackdrop from '../atoms/ParticlesBackdrop';
+import { usePortfolioState } from '../../state/PortfolioContext';
 import StrandsMicTrigger from '../molecules/StrandsMicTrigger';
 import AiConversationBox from '../organisms/AiConversationBox';
 import TopNavigationBar from '../organisms/TopNavigationBar';
@@ -15,7 +11,7 @@ export interface AiConversationPageProps {
   readonly onNavigateBack?: () => void;
 }
 
-const AiConversationPageContent = memo(function AiConversationPageContent({
+const AiConversationPage = memo(function AiConversationPage({
   onNavigateBack,
 }: AiConversationPageProps) {
   const profile = usePortfolioState();
@@ -25,7 +21,6 @@ const AiConversationPageContent = memo(function AiConversationPageContent({
 
   return (
     <AiConversationTemplate
-      backdrop={<ParticlesBackdrop />}
       topbar={
         <TopNavigationBar
           monogram="AI"
@@ -46,16 +41,6 @@ const AiConversationPageContent = memo(function AiConversationPageContent({
         <StrandsMicTrigger status={status} onToggleVoice={toggleVoiceAction} />
       }
     />
-  );
-});
-
-const AiConversationPage = memo(function AiConversationPage({
-  onNavigateBack,
-}: AiConversationPageProps) {
-  return (
-    <PortfolioProvider>
-      <AiConversationPageContent onNavigateBack={onNavigateBack} />
-    </PortfolioProvider>
   );
 });
 

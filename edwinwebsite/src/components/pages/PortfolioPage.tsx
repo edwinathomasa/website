@@ -1,9 +1,5 @@
 import { memo, useCallback, useRef } from 'react';
-import {
-  PortfolioProvider,
-  usePortfolioState,
-} from '../../state/PortfolioContext';
-import ParticlesBackdrop from '../atoms/ParticlesBackdrop';
+import { usePortfolioState } from '../../state/PortfolioContext';
 import EducationSection from '../organisms/EducationSection';
 import ExperienceSection from '../organisms/ExperienceSection';
 import ProfileHeroSection from '../organisms/ProfileHeroSection';
@@ -17,7 +13,7 @@ export interface PortfolioPageProps {
   readonly onNavigateBack?: () => void;
 }
 
-const PortfolioPageContent = memo(function PortfolioPageContent({
+const PortfolioPage = memo(function PortfolioPage({
   onNavigateBack,
 }: PortfolioPageProps) {
   const profile = usePortfolioState();
@@ -44,7 +40,6 @@ const PortfolioPageContent = memo(function PortfolioPageContent({
 
   return (
     <PortfolioTemplate
-      backdrop={<ParticlesBackdrop />}
       sidebarRef={sidebarScrollRef}
       mainRef={mainScrollRef}
       topbar={
@@ -74,16 +69,6 @@ const PortfolioPageContent = memo(function PortfolioPageContent({
         </>
       }
     />
-  );
-});
-
-const PortfolioPage = memo(function PortfolioPage({
-  onNavigateBack,
-}: PortfolioPageProps) {
-  return (
-    <PortfolioProvider>
-      <PortfolioPageContent onNavigateBack={onNavigateBack} />
-    </PortfolioProvider>
   );
 });
 

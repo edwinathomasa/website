@@ -1,7 +1,7 @@
 import { memo, type ReactNode } from 'react';
 
 export interface LandingTemplateProps {
-  readonly backdrop: ReactNode;
+  readonly backdrop?: ReactNode;
   readonly children: ReactNode;
 }
 

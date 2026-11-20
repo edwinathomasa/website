@@ -563,9 +563,31 @@ function createServerApiPlugin(env: Record<string, string>): Plugin {
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  const enableStaticFallback =
+    env.VITE_ENABLE_STATIC_FALLBACK === 'true' ||
+    Boolean(env.AWS_APP_ID || env.AWS_BRANCH);
+
+  const staticFallbackEnv = enableStaticFallback
+    ? {
+        AI_PROVIDER: (env.AI_PROVIDER ?? '').trim(),
+        AI_MODEL: (env.AI_MODEL ?? '').trim(),
+        GEMINI_API_KEY: (env.GEMINI_API_KEY ?? '').trim(),
+        OPENAI_API_KEY: (env.OPENAI_API_KEY ?? '').trim(),
+        CLAUDE_API_KEY: (
+          env.CLAUDE_API_KEY ||
+          env.ANTHROPIC_API_KEY ||
+          ''
+        ).trim(),
+        ELEVENLABS_API_KEY: (env.ELEVENLABS_API_KEY ?? '').trim(),
+        ELEVENLABS_VOICE_ID: (env.ELEVENLABS_VOICE_ID ?? '').trim(),
+      }
+    : {};
 
   return {
     plugins: [react(), createServerApiPlugin(env)],
+    define: {
+      __STATIC_FALLBACK_ENV__: JSON.stringify(staticFallbackEnv),
+    },
     resolve: {
       alias: {
         '@': new URL('./src', import.meta.url).pathname,

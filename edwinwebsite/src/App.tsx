@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
+import ParticlesBackdrop from './components/atoms/ParticlesBackdrop';
 import AiConversationPage from './components/pages/AiConversationPage';
 import LandingPage from './components/pages/LandingPage';
 import PortfolioPage from './components/pages/PortfolioPage';
 import { unlockAudioPlayback } from './services/audio/elevenLabsTts';
+import { PortfolioProvider } from './state/PortfolioContext';
 
 type ScreenName = 'landing' | 'portfolio' | 'ai';
 
@@ -52,19 +54,20 @@ function App() {
     setActiveScreen('landing');
   }, []);
 
-  if (activeScreen === 'portfolio') {
-    return <PortfolioPage onNavigateBack={navigateToLanding} />;
-  }
-
-  if (activeScreen === 'ai') {
-    return <AiConversationPage onNavigateBack={navigateToLanding} />;
-  }
-
   return (
-    <LandingPage
-      onNavigatePortfolio={navigateToPortfolio}
-      onNavigateAi={navigateToAi}
-    />
+    <PortfolioProvider>
+      <ParticlesBackdrop />
+      {activeScreen === 'portfolio' ? (
+        <PortfolioPage onNavigateBack={navigateToLanding} />
+      ) : activeScreen === 'ai' ? (
+        <AiConversationPage onNavigateBack={navigateToLanding} />
+      ) : (
+        <LandingPage
+          onNavigatePortfolio={navigateToPortfolio}
+          onNavigateAi={navigateToAi}
+        />
+      )}
+    </PortfolioProvider>
   );
 }
 

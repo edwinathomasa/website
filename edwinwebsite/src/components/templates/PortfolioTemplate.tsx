@@ -1,7 +1,7 @@
 import { memo, type ReactNode, type RefObject } from 'react';
 
 export interface PortfolioTemplateProps {
-  readonly backdrop: ReactNode;
+  readonly backdrop?: ReactNode;
   readonly topbar: ReactNode;
   readonly sidebar: ReactNode;
   readonly mainContent: ReactNode;

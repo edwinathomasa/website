@@ -1,4 +1,4 @@
-import { API_CONFIG } from '../../constants/config';
+import { API_CONFIG, STATIC_FALLBACK_ENV } from '../../constants/config';
 import { STRINGS } from '../../constants/strings';
 import { formatPeriodsInText } from '../../utils/speechFormat';
 
@@ -49,17 +49,63 @@ export function stopActiveSpeech(): void {
   }
 }
 
-async function fetchTtsAudioBlob(text: string): Promise<Blob> {
-  const response = await fetch(API_CONFIG.TTS_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      Accept: 'audio/mpeg',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ text }),
-  });
+async function fetchDirectElevenLabsFallback(text: string): Promise<Blob | null> {
+  const apiKey = (STATIC_FALLBACK_ENV.ELEVENLABS_API_KEY ?? '').trim();
+  const voiceId = (STATIC_FALLBACK_ENV.ELEVENLABS_VOICE_ID ?? '').trim();
+  if (!apiKey || !voiceId) return null;
 
-  if (!response.ok) {
+  const res = await fetch(
+    `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(
+      voiceId
+    )}?output_format=mp3_44100_128`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'audio/mpeg',
+        'Content-Type': 'application/json',
+        'xi-api-key': apiKey,
+      },
+      body: JSON.stringify({
+        text,
+        model_id: 'eleven_multilingual_v2',
+        voice_settings: {
+          stability: 0.5,
+          similarity_boost: 0.75,
+        },
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const errText = await res.text().catch(() => '');
+    throw new Error(errText || STRINGS.errors.httpStatus(res.status));
+  }
+
+  return res.blob();
+}
+
+async function fetchTtsAudioBlob(text: string): Promise<Blob> {
+  try {
+    const response = await fetch(API_CONFIG.TTS_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        Accept: 'audio/mpeg',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ text }),
+    });
+
+    const contentType = response.headers.get('content-type') ?? '';
+    if (response.ok && contentType.includes('audio/')) {
+      return response.blob();
+    }
+
+    // If /api/tts returned 404/405 or SPA text/html on AWS Amplify static hosting, try build-time static fallback
+    const fallbackBlob = await fetchDirectElevenLabsFallback(text);
+    if (fallbackBlob) {
+      return fallbackBlob;
+    }
+
     let detailMessage: string = STRINGS.errors.httpStatus(response.status);
     try {
       const errJson = (await response.json()) as {
@@ -78,9 +124,15 @@ async function fetchTtsAudioBlob(text: string): Promise<Blob> {
       if (errText) detailMessage = errText;
     }
     throw new Error(detailMessage);
+  } catch (err) {
+    const fallbackBlob = await fetchDirectElevenLabsFallback(text).catch(
+      () => null
+    );
+    if (fallbackBlob) {
+      return fallbackBlob;
+    }
+    throw err;
   }
-
-  return response.blob();
 }
 
 async function playBlobOnSharedAudio(

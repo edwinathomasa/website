@@ -6,7 +6,7 @@ frontend:
         - npm --prefix edwinwebsite ci --cache .npm --prefer-offline
     build:
       commands:
-        - npm --prefix edwinwebsite run build
+        - VITE_ENABLE_STATIC_FALLBACK=true npm --prefix edwinwebsite run build
   artifacts:
     baseDirectory: edwinwebsite/dist
     files:

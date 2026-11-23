@@ -1,0 +1,24 @@
+{
+  "name": "portfolio-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build:shared": "npm run build --workspace=@portfolio/shared",
+    "build:website": "npm run build:shared && npm run build --workspace=@portfolio/website",
+    "build:backend": "npm run build:shared && npm run build --workspace=@portfolio/backend",
+    "build": "npm run build:shared && npm run build --workspace=@portfolio/website && npm run build --workspace=@portfolio/backend",
+    "dev:website": "npm run dev --workspace=@portfolio/website",
+    "dev:backend": "npm run dev --workspace=@portfolio/backend",
+    "seed:backend": "npm run seed --workspace=@portfolio/backend",
+    "lint": "npm run lint --workspace=@portfolio/website",
+    "typecheck": "npm run build:shared && npm run typecheck --workspace=@portfolio/backend"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

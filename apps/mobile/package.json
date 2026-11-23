@@ -1,0 +1,9 @@
+{
+  "name": "@portfolio/mobile",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Placeholder workspace for future mobile app (React Native or Kotlin Multiplatform)",
+  "dependencies": {
+    "@portfolio/shared": "*"
+  }
+}

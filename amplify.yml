@@ -1,17 +1,25 @@
+# AWS Amplify Monorepo Config — deploys only apps/website
+# Required Amplify Console Environment Variables for path-filtered deploys:
+#   AMPLIFY_MONOREPO_APP_ROOT = apps/website
+#   AMPLIFY_DIFF_DEPLOY       = true
+#   VITE_API_BASE_URL         = https://<api-id>.execute-api.<region>.amazonaws.com
 version: 1
-frontend:
-  phases:
-    preBuild:
-      commands:
-        - npm --prefix edwinwebsite ci --cache .npm --prefer-offline
-    build:
-      commands:
-        - VITE_ENABLE_STATIC_FALLBACK=true npm --prefix edwinwebsite run build
-  artifacts:
-    baseDirectory: edwinwebsite/dist
-    files:
-      - '**/*'
-  cache:
-    paths:
-      - .npm/**/*
-      - edwinwebsite/node_modules/**/*
+applications:
+  - appRoot: apps/website
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm --prefix ../.. ci --cache ../../.npm --prefer-offline
+        build:
+          commands:
+            - npm --prefix ../.. run build --workspace=@portfolio/shared
+            - npm run build
+      artifacts:
+        baseDirectory: dist
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - ../../.npm/**/*
+          - ../../node_modules/**/*

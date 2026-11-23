@@ -49,6 +49,7 @@ Globals:
       - arm64
     Timeout: 25
     MemorySize: 512
+    CodeUri: dist-lambda/
     Environment:
       Variables:
         MONGODB_URI: !Ref MongoDbUri
@@ -81,8 +82,7 @@ Resources:
   HealthFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: .
-      Handler: src/handlers/health.handler
+      Handler: health.handler
       Events:
         GetHealth:
           Type: HttpApi
@@ -90,23 +90,11 @@ Resources:
             ApiId: !Ref PortfolioHttpApi
             Path: /api/health
             Method: GET
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Format: esm
-        OutExtension:
-          - .js=.mjs
-        Minify: true
-        Target: es2022
-        Sourcemap: true
-        EntryPoints:
-          - src/handlers/health.ts
 
   ProfileFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: .
-      Handler: src/handlers/profile.handler
+      Handler: profile.handler
       Events:
         GetProfile:
           Type: HttpApi
@@ -114,23 +102,11 @@ Resources:
             ApiId: !Ref PortfolioHttpApi
             Path: /api/profile
             Method: GET
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Format: esm
-        OutExtension:
-          - .js=.mjs
-        Minify: true
-        Target: es2022
-        Sourcemap: true
-        EntryPoints:
-          - src/handlers/profile.ts
 
   ChatFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: .
-      Handler: src/handlers/chat.handler
+      Handler: chat.handler
       Events:
         PostChat:
           Type: HttpApi
@@ -138,23 +114,11 @@ Resources:
             ApiId: !Ref PortfolioHttpApi
             Path: /api/chat
             Method: POST
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Format: esm
-        OutExtension:
-          - .js=.mjs
-        Minify: true
-        Target: es2022
-        Sourcemap: true
-        EntryPoints:
-          - src/handlers/chat.ts
 
   TranscribeFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: .
-      Handler: src/handlers/transcribe.handler
+      Handler: transcribe.handler
       Events:
         PostTranscribe:
           Type: HttpApi
@@ -162,23 +126,11 @@ Resources:
             ApiId: !Ref PortfolioHttpApi
             Path: /api/transcribe
             Method: POST
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Format: esm
-        OutExtension:
-          - .js=.mjs
-        Minify: true
-        Target: es2022
-        Sourcemap: true
-        EntryPoints:
-          - src/handlers/transcribe.ts
 
   SpeakFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: .
-      Handler: src/handlers/speak.handler
+      Handler: speak.handler
       Events:
         PostSpeak:
           Type: HttpApi
@@ -186,17 +138,6 @@ Resources:
             ApiId: !Ref PortfolioHttpApi
             Path: /api/speak
             Method: POST
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Format: esm
-        OutExtension:
-          - .js=.mjs
-        Minify: true
-        Target: es2022
-        Sourcemap: true
-        EntryPoints:
-          - src/handlers/speak.ts
 
 Outputs:
   ApiBaseUrl:

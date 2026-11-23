@@ -1,0 +1,27 @@
+{
+  "name": "@portfolio/backend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/devServer.ts",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.json",
+    "seed": "tsx scripts/seed.ts",
+    "sam:build": "sam build",
+    "sam:deploy": "sam deploy --guided"
+  },
+  "dependencies": {
+    "@google/genai": "^3.0.0",
+    "@portfolio/shared": "*",
+    "mongodb": "^6.15.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.148",
+    "@types/node": "^22.13.0",
+    "dotenv": "^16.4.7",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.19.3",
+    "typescript": "~5.8.3"
+  }
+}

@@ -1,0 +1,204 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Portfolio Serverless API (Node.js 22 + TypeScript + MongoDB + Model-Agnostic AI + ElevenLabs)
+
+Parameters:
+  AllowedOrigin:
+    Type: String
+    Default: '*'
+    Description: Production frontend origin (e.g. https://yourdomain.com)
+  MongoDbUri:
+    Type: String
+    NoEcho: true
+  MongoDbName:
+    Type: String
+    Default: portfolio
+  ProfileSlug:
+    Type: String
+    Default: edwin-thomas
+  AiProvider:
+    Type: String
+    Default: gemini
+  AiModel:
+    Type: String
+    Default: ''
+  GeminiApiKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+  OpenAiApiKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+  ClaudeApiKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+  ElevenLabsApiKey:
+    Type: String
+    NoEcho: true
+    Default: ''
+  ElevenLabsVoiceId:
+    Type: String
+    Default: ''
+
+Globals:
+  Function:
+    Runtime: nodejs22.x
+    Architectures:
+      - arm64
+    Timeout: 25
+    MemorySize: 512
+    Environment:
+      Variables:
+        MONGODB_URI: !Ref MongoDbUri
+        MONGODB_DB_NAME: !Ref MongoDbName
+        PROFILE_SLUG: !Ref ProfileSlug
+        AI_PROVIDER: !Ref AiProvider
+        AI_MODEL: !Ref AiModel
+        GEMINI_API_KEY: !Ref GeminiApiKey
+        OPENAI_API_KEY: !Ref OpenAiApiKey
+        CLAUDE_API_KEY: !Ref ClaudeApiKey
+        ELEVENLABS_API_KEY: !Ref ElevenLabsApiKey
+        ELEVENLABS_VOICE_ID: !Ref ElevenLabsVoiceId
+
+Resources:
+  PortfolioHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins:
+          - !Ref AllowedOrigin
+          - http://localhost:5173
+        AllowMethods:
+          - GET
+          - POST
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+          - Accept
+
+  HealthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: src/handlers/health.handler
+      Events:
+        GetHealth:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref PortfolioHttpApi
+            Path: /api/health
+            Method: GET
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Format: esm
+        OutExtension:
+          - .js=.mjs
+        Minify: true
+        Target: es2022
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/health.ts
+
+  ProfileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: src/handlers/profile.handler
+      Events:
+        GetProfile:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref PortfolioHttpApi
+            Path: /api/profile
+            Method: GET
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Format: esm
+        OutExtension:
+          - .js=.mjs
+        Minify: true
+        Target: es2022
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/profile.ts
+
+  ChatFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: src/handlers/chat.handler
+      Events:
+        PostChat:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref PortfolioHttpApi
+            Path: /api/chat
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Format: esm
+        OutExtension:
+          - .js=.mjs
+        Minify: true
+        Target: es2022
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/chat.ts
+
+  TranscribeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: src/handlers/transcribe.handler
+      Events:
+        PostTranscribe:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref PortfolioHttpApi
+            Path: /api/transcribe
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Format: esm
+        OutExtension:
+          - .js=.mjs
+        Minify: true
+        Target: es2022
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/transcribe.ts
+
+  SpeakFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: src/handlers/speak.handler
+      Events:
+        PostSpeak:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref PortfolioHttpApi
+            Path: /api/speak
+            Method: POST
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Format: esm
+        OutExtension:
+          - .js=.mjs
+        Minify: true
+        Target: es2022
+        Sourcemap: true
+        EntryPoints:
+          - src/handlers/speak.ts
+
+Outputs:
+  ApiBaseUrl:
+    Description: API Gateway HTTP API Base URL (set as VITE_API_BASE_URL in Amplify)
+    Value: !Sub 'https://${PortfolioHttpApi}.execute-api.${AWS::Region}.amazonaws.com'

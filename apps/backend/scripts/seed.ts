@@ -14,7 +14,11 @@ import {
   type SkillDoc,
 } from '../src/db/models.js';
 import { closeDb, getDb } from '../src/db/mongoClient.js';
+import { educationSeed } from '../src/seed/educationSeed.js';
+import { experienceSeed } from '../src/seed/experienceSeed.js';
 import { profileSeed } from '../src/seed/profileSeed.js';
+import { projectsSeed } from '../src/seed/projectsSeed.js';
+import { skillsSeed } from '../src/seed/skillsSeed.js';
 
 function slugify(value: string): string {
   return value
@@ -67,7 +71,7 @@ async function seed(): Promise<void> {
   const categoryDocs: SkillCategoryDoc[] = [];
   const skillDocs: SkillDoc[] = [];
 
-  profileSeed.skillCategories.forEach((group, catIdx) => {
+  skillsSeed.forEach((group, catIdx) => {
     const categorySlug = slugify(group.category);
     categoryDocs.push({
       slug: categorySlug,
@@ -108,7 +112,7 @@ async function seed(): Promise<void> {
   const experienceDocs: ExperienceDoc[] = [];
   const assignmentDocs: AssignmentDoc[] = [];
 
-  profileSeed.experience.forEach((exp, expIdx) => {
+  experienceSeed.forEach((exp, expIdx) => {
     const experienceSlug = slugify(`${exp.company}-${exp.role}`);
     experienceDocs.push({
       slug: experienceSlug,
@@ -165,16 +169,14 @@ async function seed(): Promise<void> {
   }
 
   // 6. education
-  const educationDocs: EducationDoc[] = (profileSeed.education ?? []).map(
-    (edu, idx) => ({
-      profileSlug,
-      degree: edu.degree,
-      institution: edu.institution,
-      period: edu.period,
-      sortOrder: idx,
-      updatedAt: now,
-    })
-  );
+  const educationDocs: EducationDoc[] = educationSeed.map((edu, idx) => ({
+    profileSlug,
+    degree: edu.degree,
+    institution: edu.institution,
+    period: edu.period,
+    sortOrder: idx,
+    updatedAt: now,
+  }));
 
   await db
     .collection<EducationDoc>(COLLECTIONS.EDUCATION)
@@ -186,7 +188,7 @@ async function seed(): Promise<void> {
   }
 
   // 7. projects
-  const projectDocs: ProjectDoc[] = profileSeed.projects.map((proj, idx) => ({
+  const projectDocs: ProjectDoc[] = projectsSeed.map((proj, idx) => ({
     profileSlug,
     title: proj.title,
     description: proj.description,
